@@ -81,6 +81,7 @@ flutter:
   # Assets
   assets:
     - assets/ml_models/mobilenet_v2.tflite
+    - assets/ml_models/imagenet_labels.txt
     - assets/images/empty_state/
 
   # An image asset can refer to one or more resolution-specific "variants", see

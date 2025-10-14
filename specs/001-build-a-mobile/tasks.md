@@ -107,9 +107,10 @@ Flutter mobile app structure:
 - [x] T029 [P] [US1] Unit test for ImageRecognitionService in `test/unit/data/services/image_recognition_service_test.dart`
   - Test: classifyImage (preprocessing, inference, confidence), mapLabelToCategory (groceries, tools, electronics, etc.), dispose
   - Mock: TFLite Interpreter - 12 tests passed
-- [ ] T030 [P] [US1] Unit test for AddItemViewModel in `test/unit/presentation/viewmodels/add_item_viewmodel_test.dart`
-  - Test: pickImage, recognizeItem, saveItem, error handling
-  - Mock: repositories and services
+- [x] T030 [P] [US1] Unit test for AddItemViewModel in `test/unit/presentation/viewmodels/add_item_viewmodel_test.dart`
+  - Test: loadCategories, recognizeImage, saveItem, field setters, validation, error handling, reset - 18 tests (3 skipped for file I/O)
+  - Mock: ItemRepository, CategoryRepository, ImageRepository, ImageRecognitionService, ImagePicker
+  - Note: XFile.readAsBytes() tests deferred to integration tests
 
 **Widget Tests** (UI Components):
 - [ ] T031 [P] [US1] Widget test for AddItemScreen in `test/widget/screens/add_item_screen_test.dart`
@@ -128,29 +129,33 @@ Flutter mobile app structure:
 ### Implementation for User Story 1
 
 **Data Layer**:
-- [ ] T036 [US1] Implement ItemRepository in `lib/data/repositories/item_repository_impl.dart`
-  - Depends on: T008 (Item model), T018 (database)
+- [x] T036 [US1] Implement ItemRepository in `lib/data/repositories/item_repository_impl.dart`
+  - Already implemented during T026 test development
   - Methods: createItem, getItemById, getItems, searchItems, updateItem, deleteItem
-- [ ] T037 [US1] Implement CategoryRepository in `lib/data/repositories/category_repository_impl.dart`
-  - Depends on: T009 (Category model), T018 (database)
+- [x] T037 [US1] Implement CategoryRepository in `lib/data/repositories/category_repository_impl.dart`
+  - Already implemented during T027 test development
   - Methods: getCategories, getCategoryById, initializeDefaultCategories
-- [ ] T038 [US1] Implement ImageRepository in `lib/data/repositories/image_repository_impl.dart`
-  - Depends on: T014 (constants)
+- [x] T038 [US1] Implement ImageRepository in `lib/data/repositories/image_repository_impl.dart`
+  - Already implemented during T028 test development
   - Methods: saveImage, generateThumbnail, getImagePath, compressImage, deleteImage
-- [ ] T039 [US1] Implement ImageRecognitionService in `lib/data/services/image_recognition_service_impl.dart`
-  - Depends on: T012 (ImageRecognitionResult model), T005 (ML model)
+- [x] T039 [US1] Implement ImageRecognitionService in `lib/data/services/image_recognition_service_impl.dart`
+  - Already implemented during T029 test development
   - Methods: initializeModel, classifyImage, mapLabelToCategory, dispose
 
 **Presentation Layer**:
-- [ ] T040 [P] [US1] Create AddItemViewModel in `lib/presentation/viewmodels/add_item_viewmodel.dart`
-  - Depends on: T036-T039 (repositories & services)
+- [x] T040 [P] [US1] Create AddItemViewModel in `lib/presentation/viewmodels/add_item_viewmodel.dart`
+  - Already implemented during T030 test development
   - State management with Provider/ChangeNotifier
-- [ ] T041 [P] [US1] Create ItemCard widget in `lib/presentation/widgets/item/item_card.dart`
-- [ ] T042 [P] [US1] Create ItemThumbnail widget in `lib/presentation/widgets/item/item_thumbnail.dart`
-- [ ] T043 [P] [US1] Create CategoryBadge widget in `lib/presentation/widgets/category/category_badge.dart`
-- [ ] T044 [US1] Create AddItemScreen in `lib/presentation/screens/add_item_screen.dart`
-  - Depends on: T040-T043 (ViewModel and widgets)
-  - Features: Camera button, image preview, recognition results, manual override, save button
+- [x] T041 [P] [US1] Create ItemCard widget in `lib/presentation/widgets/item/item_card.dart`
+  - Displays item thumbnail, name, category badge, quantity
+- [x] T042 [P] [US1] Create ItemThumbnail widget in `lib/presentation/widgets/item/item_thumbnail.dart`
+  - Shows image with fallback icon, rounded corners
+- [x] T043 [P] [US1] Create CategoryBadge widget in `lib/presentation/widgets/category/category_badge.dart`
+  - Displays category icon and name with Material Design 3 styling
+- [x] T044 [US1] Create AddItemScreen in `lib/presentation/screens/add_item_screen.dart`
+  - Features: Camera/gallery buttons, image preview, AI recognition results, form fields, validation
+- [x] T045 [US1] Create HomeScreen in `lib/presentation/screens/home_screen.dart`
+  - Displays item list, FAB for adding items, refresh functionality
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 - User can add items via camera

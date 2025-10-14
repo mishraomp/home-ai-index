@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter/services.dart';
 import 'package:image/image.dart' as img;
 import 'package:tflite_flutter/tflite_flutter.dart';
 
@@ -10,6 +11,7 @@ import 'package:home_ai_index/data/services/image_recognition_service.dart';
 /// Implementation of ImageRecognitionService using TensorFlow Lite
 class ImageRecognitionServiceImpl implements ImageRecognitionService {
   final Interpreter _interpreter;
+  final List<String> _labels;
   
   // MobileNet v2 expects 224x224 RGB images
   static const int _inputSize = 224;
@@ -95,13 +97,22 @@ class ImageRecognitionServiceImpl implements ImageRecognitionService {
     'notebook': 'books',
   };
 
-  ImageRecognitionServiceImpl(this._interpreter);
+  ImageRecognitionServiceImpl(this._interpreter, this._labels);
 
-  /// Factory constructor to initialize service from model file
-  static Future<ImageRecognitionServiceImpl> create(String modelPath) async {
+  /// Factory constructor to initialize service from model file and labels
+  static Future<ImageRecognitionServiceImpl> create(
+    String modelPath, {
+    String labelsPath = 'assets/ml_models/imagenet_labels.txt',
+  }) async {
     try {
+      // Load the model
       final interpreter = await Interpreter.fromAsset(modelPath);
-      return ImageRecognitionServiceImpl(interpreter);
+      
+      // Load the labels
+      final labelsData = await rootBundle.loadString(labelsPath);
+      final labels = labelsData.split('\n').map((e) => e.trim()).toList();
+      
+      return ImageRecognitionServiceImpl(interpreter, labels);
     } catch (e) {
       throw app_exceptions.ModelNotInitializedException(
         'Failed to load model from $modelPath: $e',
@@ -123,8 +134,8 @@ class ImageRecognitionServiceImpl implements ImageRecognitionService {
       // Preprocess image
       final input = _preprocessImage(image);
 
-      // Run inference
-      final output = List.filled(1, List.filled(1000, 0.0));
+      // Run inference - MobileNet v2 outputs 1001 classes (including background class at index 0)
+      final output = List.filled(1, List.filled(1001, 0.0));
       _interpreter.run(input, output);
 
       // Find the label with highest confidence
@@ -196,9 +207,10 @@ class ImageRecognitionServiceImpl implements ImageRecognitionService {
 
   /// Maps model output index to human-readable label
   String _getLabelForIndex(int index) {
-    // Simplified mapping - in production, load from labels.txt file
-    // This is just for testing purposes
-    return 'object_$index';
+    if (index >= 0 && index < _labels.length) {
+      return _labels[index].replaceAll('_', ' ');
+    }
+    return 'unknown';
   }
 
   @override

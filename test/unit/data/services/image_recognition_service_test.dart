@@ -17,10 +17,15 @@ void main() {
   group('ImageRecognitionService', () {
     late ImageRecognitionServiceImpl service;
     late MockInterpreter mockInterpreter;
+    late List<String> mockLabels;
 
     setUp(() {
       mockInterpreter = MockInterpreter();
-      service = ImageRecognitionServiceImpl(mockInterpreter);
+      // Create mock labels list with 1001 entries (0-1000)
+      mockLabels = List.generate(1001, (i) => 'label_$i');
+      mockLabels[0] = 'background';
+      mockLabels[123] = 'test_object';
+      service = ImageRecognitionServiceImpl(mockInterpreter, mockLabels);
     });
 
     group('classifyImage', () {

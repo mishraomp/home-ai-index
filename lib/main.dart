@@ -1,31 +1,87 @@
 import 'package:flutter/material.dart';
-import 'package:home_ai_index/core/theme/app_theme.dart';
 import 'package:provider/provider.dart';
+
+import 'package:home_ai_index/core/theme/app_theme.dart';
+import 'package:home_ai_index/data/datasources/local/database_helper.dart';
+import 'package:home_ai_index/data/repositories/category_repository.dart';
+import 'package:home_ai_index/data/repositories/category_repository_impl.dart';
+import 'package:home_ai_index/data/repositories/image_repository.dart';
+import 'package:home_ai_index/data/repositories/image_repository_impl.dart';
+import 'package:home_ai_index/data/repositories/item_repository.dart';
+import 'package:home_ai_index/data/repositories/item_repository_impl.dart';
+import 'package:home_ai_index/data/services/image_recognition_service.dart';
+import 'package:home_ai_index/data/services/image_recognition_service_impl.dart';
+import 'package:home_ai_index/presentation/screens/home_screen.dart';
+import 'package:home_ai_index/presentation/viewmodels/add_item_viewmodel.dart';
 
 /// Entry point for Home AI Index application
 ///
 /// Initializes the app with:
+/// - Database and repositories
 /// - Provider state management
 /// - Material Design 3 theming
 /// - Navigation routing
-void main() {
-  runApp(const HomeAIIndexApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize database
+  final databaseHelper = DatabaseHelper.instance;
+  await databaseHelper.database; // Ensure database is created
+
+  // Initialize repositories
+  final itemRepository = ItemRepositoryImpl(databaseHelper);
+  final categoryRepository = CategoryRepositoryImpl(databaseHelper);
+  final imageRepository = ImageRepositoryImpl();
+
+  // Initialize ML service
+  final recognitionService = await ImageRecognitionServiceImpl.create(
+    'assets/ml_models/mobilenet_v2.tflite',
+  );
+
+  runApp(HomeAIIndexApp(
+    itemRepository: itemRepository,
+    categoryRepository: categoryRepository,
+    imageRepository: imageRepository,
+    recognitionService: recognitionService,
+  ));
 }
 
 /// Root application widget
 ///
 /// Sets up Provider for state management and MaterialApp with theme configuration.
 class HomeAIIndexApp extends StatelessWidget {
-  const HomeAIIndexApp({super.key});
+  final ItemRepositoryImpl itemRepository;
+  final CategoryRepositoryImpl categoryRepository;
+  final ImageRepositoryImpl imageRepository;
+  final ImageRecognitionServiceImpl recognitionService;
+
+  const HomeAIIndexApp({
+    super.key,
+    required this.itemRepository,
+    required this.categoryRepository,
+    required this.imageRepository,
+    required this.recognitionService,
+  });
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: const [
-        // Providers will be added here as we implement ViewModels
-        // Example:
-        // ChangeNotifierProvider(create: (_) => HomeViewModel()),
-        // ChangeNotifierProvider(create: (_) => AddItemViewModel()),
+      providers: [
+        // Repository providers - Register by interface type
+        Provider<ItemRepository>.value(value: itemRepository),
+        Provider<CategoryRepository>.value(value: categoryRepository),
+        Provider<ImageRepository>.value(value: imageRepository),
+        Provider<ImageRecognitionService>.value(value: recognitionService),
+
+        // ViewModel providers
+        ChangeNotifierProvider(
+          create: (_) => AddItemViewModel(
+            itemRepository: itemRepository,
+            categoryRepository: categoryRepository,
+            imageRepository: imageRepository,
+            recognitionService: recognitionService,
+          ),
+        ),
       ],
       child: MaterialApp(
         title: 'Home AI Index',
@@ -34,15 +90,7 @@ class HomeAIIndexApp extends StatelessWidget {
         // Material Design 3 themes
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
-        home: const PlaceholderHomeScreen(),
-
-        // Named routes will be added here as screens are implemented
-        // routes: {
-        //   '/add-item': (context) => const AddItemScreen(),
-        //   '/item-details': (context) => const ItemDetailsScreen(),
-        //   '/locations': (context) => const LocationsScreen(),
-        //   '/search': (context) => const SearchScreen(),
-        // },
+        home: const HomeScreen(),
       ),
     );
   }
