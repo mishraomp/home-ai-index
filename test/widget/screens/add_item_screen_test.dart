@@ -19,7 +19,7 @@ void main() {
 
     setUp(() {
       mockViewModel = MockAddItemViewModel();
-      
+
       // Default mock behavior
       when(mockViewModel.isLoading).thenReturn(false);
       when(mockViewModel.errorMessage).thenReturn(null);
@@ -47,18 +47,20 @@ void main() {
 
     testWidgets('displays app bar with title', (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget());
-      
+
       expect(find.text('Add Item'), findsOneWidget);
       expect(find.byType(AppBar), findsOneWidget);
     });
 
     testWidgets('displays save button in app bar', (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget());
-      
+
       expect(find.byIcon(Icons.check), findsOneWidget);
     });
 
-    testWidgets('displays camera and gallery buttons', (WidgetTester tester) async {
+    testWidgets('displays camera and gallery buttons', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pump();
 
@@ -68,20 +70,20 @@ void main() {
       expect(find.byIcon(Icons.photo_library), findsOneWidget);
     });
 
-    testWidgets('displays loading indicator when isLoading is true', 
-        (WidgetTester tester) async {
+    testWidgets('displays loading indicator when isLoading is true', (
+      WidgetTester tester,
+    ) async {
       when(mockViewModel.isLoading).thenReturn(true);
-      
+
       await tester.pumpWidget(createTestWidget());
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('hides form when loading', 
-        (WidgetTester tester) async {
+    testWidgets('hides form when loading', (WidgetTester tester) async {
       when(mockViewModel.isLoading).thenReturn(true);
-      
+
       await tester.pumpWidget(createTestWidget());
       await tester.pump();
 
@@ -90,18 +92,20 @@ void main() {
       expect(find.text('Gallery'), findsNothing);
     });
 
-    testWidgets('displays placeholder icon when no image', 
-        (WidgetTester tester) async {
+    testWidgets('displays placeholder icon when no image', (
+      WidgetTester tester,
+    ) async {
       when(mockViewModel.selectedImagePath).thenReturn(null);
-      
+
       await tester.pumpWidget(createTestWidget());
       await tester.pump();
 
       expect(find.byIcon(Icons.image), findsOneWidget);
     });
 
-    testWidgets('displays recognition result card when available', 
-        (WidgetTester tester) async {
+    testWidgets('displays recognition result card when available', (
+      WidgetTester tester,
+    ) async {
       when(mockViewModel.recognitionResult).thenReturn(
         ImageRecognitionResult(
           label: 'banana',
@@ -109,7 +113,7 @@ void main() {
           suggestedCategory: 'Food',
         ),
       );
-      
+
       await tester.pumpWidget(createTestWidget());
       await tester.pump();
 
@@ -118,10 +122,11 @@ void main() {
       expect(find.textContaining('95'), findsOneWidget);
     });
 
-    testWidgets('hides recognition result when null', 
-        (WidgetTester tester) async {
+    testWidgets('hides recognition result when null', (
+      WidgetTester tester,
+    ) async {
       when(mockViewModel.recognitionResult).thenReturn(null);
-      
+
       await tester.pumpWidget(createTestWidget());
       await tester.pump();
 
@@ -137,20 +142,22 @@ void main() {
       expect(find.byType(Form), findsOneWidget);
     });
 
-    testWidgets('displays error message when present', 
-        (WidgetTester tester) async {
+    testWidgets('displays error message when present', (
+      WidgetTester tester,
+    ) async {
       when(mockViewModel.errorMessage).thenReturn('Test error message');
-      
+
       await tester.pumpWidget(createTestWidget());
       await tester.pump();
 
       expect(find.text('Test error message'), findsOneWidget);
     });
 
-    testWidgets('calls pickImage when camera button tapped', 
-        (WidgetTester tester) async {
+    testWidgets('calls pickImage when camera button tapped', (
+      WidgetTester tester,
+    ) async {
       when(mockViewModel.pickImage(any)).thenAnswer((_) async => {});
-      
+
       await tester.pumpWidget(createTestWidget());
       await tester.pump();
 
@@ -161,10 +168,11 @@ void main() {
       verify(mockViewModel.pickImage(ImageSource.camera)).called(1);
     });
 
-    testWidgets('calls pickImage when gallery button tapped', 
-        (WidgetTester tester) async {
+    testWidgets('calls pickImage when gallery button tapped', (
+      WidgetTester tester,
+    ) async {
       when(mockViewModel.pickImage(any)).thenAnswer((_) async => {});
-      
+
       await tester.pumpWidget(createTestWidget());
       await tester.pump();
 
@@ -175,14 +183,15 @@ void main() {
       verify(mockViewModel.pickImage(ImageSource.gallery)).called(1);
     });
 
-    testWidgets('save icon button exists in app bar', 
-        (WidgetTester tester) async {
+    testWidgets('save icon button exists in app bar', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pump();
 
       // Verify the save icon button exists
       expect(find.byIcon(Icons.check), findsOneWidget);
-      
+
       // Verify it's clickable (it's an IconButton)
       final iconButton = tester.widget<IconButton>(
         find.ancestor(
@@ -193,8 +202,7 @@ void main() {
       expect(iconButton.onPressed, isNotNull);
     });
 
-    testWidgets('loads categories on init', 
-        (WidgetTester tester) async {
+    testWidgets('loads categories on init', (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pump();
 
@@ -202,15 +210,11 @@ void main() {
       verify(mockViewModel.loadCategories()).called(1);
     });
 
-    testWidgets('displays categories in dropdown when available', 
-        (WidgetTester tester) async {
+    testWidgets('displays categories in dropdown when available', (
+      WidgetTester tester,
+    ) async {
       when(mockViewModel.categories).thenReturn([
-        Category(
-          id: '1',
-          name: 'Food',
-          iconCodePoint: 0xe8cc,
-          isCustom: false,
-        ),
+        Category(id: '1', name: 'Food', iconCodePoint: 0xe8cc, isCustom: false),
         Category(
           id: '2',
           name: 'Electronics',
@@ -218,7 +222,7 @@ void main() {
           isCustom: false,
         ),
       ]);
-      
+
       await tester.pumpWidget(createTestWidget());
       await tester.pump();
 

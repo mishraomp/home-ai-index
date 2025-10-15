@@ -5,17 +5,6 @@ import 'package:equatable/equatable.dart';
 /// Tracks where an item was located at specific points in time.
 /// Limited to the most recent 10 entries per item.
 class LocationHistory extends Equatable {
-  /// Unique identifier (UUID format)
-  final String id;
-
-  /// ID of the item this history entry belongs to
-  final String itemId;
-
-  /// ID of the location where the item was
-  final String locationId;
-
-  /// Timestamp when the item was moved to this location
-  final DateTime timestamp;
 
   const LocationHistory({
     required this.id,
@@ -43,6 +32,17 @@ class LocationHistory extends Equatable {
       timestamp: DateTime.parse(map['timestamp'] as String),
     );
   }
+  /// Unique identifier (UUID format)
+  final String id;
+
+  /// ID of the item this history entry belongs to
+  final String itemId;
+
+  /// ID of the location where the item was
+  final String locationId;
+
+  /// Timestamp when the item was moved to this location
+  final DateTime timestamp;
 
   /// Converts this LocationHistory to a JSON map
   Map<String, dynamic> toJson() {

@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 
 /// Widget to display an item's thumbnail image with fallback
 class ItemThumbnail extends StatelessWidget {
-  final String? imagePath;
-  final double size;
-  final IconData fallbackIcon;
 
   const ItemThumbnail({
     super.key,
@@ -14,6 +11,9 @@ class ItemThumbnail extends StatelessWidget {
     this.size = 80,
     this.fallbackIcon = Icons.inventory_2,
   });
+  final String? imagePath;
+  final double size;
+  final IconData fallbackIcon;
 
   @override
   Widget build(BuildContext context) {

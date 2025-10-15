@@ -78,9 +78,17 @@ class MockItemRepository extends _i1.Mock implements _i4.ItemRepository {
           as _i5.Future<_i6.Item?>);
 
   @override
-  _i5.Future<List<_i6.Item>> getItems() =>
+  _i5.Future<List<_i6.Item>> getItems({
+    String? categoryId,
+    String? locationId,
+    bool? includeUnlocated = false,
+  }) =>
       (super.noSuchMethod(
-            Invocation.method(#getItems, []),
+            Invocation.method(#getItems, [], {
+              #categoryId: categoryId,
+              #locationId: locationId,
+              #includeUnlocated: includeUnlocated,
+            }),
             returnValue: _i5.Future<List<_i6.Item>>.value(<_i6.Item>[]),
           )
           as _i5.Future<List<_i6.Item>>);

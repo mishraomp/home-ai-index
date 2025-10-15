@@ -5,14 +5,6 @@ import 'package:equatable/equatable.dart';
 /// Locations form a hierarchical structure (up to 5 levels deep).
 /// Example: Home > Kitchen > Pantry > Top Shelf > Left Side
 class Location extends Equatable {
-  /// Unique identifier (UUID format)
-  final String id;
-
-  /// Display name of the location
-  final String name;
-
-  /// ID of the parent location (null for root locations)
-  final String? parentId;
 
   const Location({required this.id, required this.name, this.parentId});
 
@@ -33,6 +25,14 @@ class Location extends Equatable {
       parentId: map['parent_id'] as String?,
     );
   }
+  /// Unique identifier (UUID format)
+  final String id;
+
+  /// Display name of the location
+  final String name;
+
+  /// ID of the parent location (null for root locations)
+  final String? parentId;
 
   /// Converts this Location to a JSON map
   Map<String, dynamic> toJson() {

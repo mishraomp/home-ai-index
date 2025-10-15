@@ -79,21 +79,25 @@ void main() {
         addedAt: testItem.addedAt,
         updatedAt: testItem.updatedAt,
       );
-      
+
       await tester.pumpWidget(createTestWidget(item: itemWithoutNotes));
 
       expect(find.text('Test notes'), findsNothing);
     });
 
-    testWidgets('displays quantity badge when quantity > 1', (WidgetTester tester) async {
+    testWidgets('displays quantity badge when quantity > 1', (
+      WidgetTester tester,
+    ) async {
       final itemWithQuantity = testItem.copyWith(quantity: 5);
-      
+
       await tester.pumpWidget(createTestWidget(item: itemWithQuantity));
 
       expect(find.text('x5'), findsOneWidget);
     });
 
-    testWidgets('hides quantity badge when quantity is 1', (WidgetTester tester) async {
+    testWidgets('hides quantity badge when quantity is 1', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(createTestWidget(item: testItem));
 
       expect(find.text('x1'), findsNothing);
@@ -119,12 +123,9 @@ void main() {
 
     testWidgets('calls onTap when tapped', (WidgetTester tester) async {
       bool tapped = false;
-      
+
       await tester.pumpWidget(
-        createTestWidget(
-          item: testItem,
-          onTap: () => tapped = true,
-        ),
+        createTestWidget(item: testItem, onTap: () => tapped = true),
       );
 
       await tester.tap(find.byType(ItemCard));
@@ -134,16 +135,11 @@ void main() {
     });
 
     testWidgets('works without onTap callback', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        createTestWidget(
-          item: testItem,
-          onTap: null,
-        ),
-      );
+      await tester.pumpWidget(createTestWidget(item: testItem, onTap: null));
 
       // Should render without error
       expect(find.byType(ItemCard), findsOneWidget);
-      
+
       // Tapping should not throw an error
       await tester.tap(find.byType(ItemCard));
       await tester.pumpAndSettle();
@@ -153,7 +149,7 @@ void main() {
       final longNameItem = testItem.copyWith(
         name: 'This is a very long item name that should be truncated',
       );
-      
+
       await tester.pumpWidget(createTestWidget(item: longNameItem));
 
       // The text widget should use ellipsis
@@ -164,15 +160,16 @@ void main() {
 
     testWidgets('truncates long notes', (WidgetTester tester) async {
       final longNotesItem = testItem.copyWith(
-        notes: 'These are very long notes that should be truncated in the display',
+        notes:
+            'These are very long notes that should be truncated in the display',
       );
-      
+
       await tester.pumpWidget(createTestWidget(item: longNotesItem));
 
       // Find the notes text widget
       final notesText = find.text(longNotesItem.notes!);
       expect(notesText, findsOneWidget);
-      
+
       final textWidget = tester.widget<Text>(notesText);
       expect(textWidget.maxLines, equals(1));
       expect(textWidget.overflow, equals(TextOverflow.ellipsis));
@@ -180,10 +177,7 @@ void main() {
 
     testWidgets('uses correct category icon', (WidgetTester tester) async {
       await tester.pumpWidget(
-        createTestWidget(
-          item: testItem,
-          categoryIcon: Icons.laptop,
-        ),
+        createTestWidget(item: testItem, categoryIcon: Icons.laptop),
       );
 
       expect(find.byType(CategoryBadge), findsOneWidget);
@@ -191,10 +185,7 @@ void main() {
 
     testWidgets('uses correct category name', (WidgetTester tester) async {
       await tester.pumpWidget(
-        createTestWidget(
-          item: testItem,
-          categoryName: 'Electronics',
-        ),
+        createTestWidget(item: testItem, categoryName: 'Electronics'),
       );
 
       expect(find.text('Electronics'), findsOneWidget);

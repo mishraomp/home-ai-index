@@ -6,34 +6,46 @@ import 'package:home_ai_index/presentation/widgets/item/item_thumbnail.dart';
 
 /// Widget to display an item card in a list
 class ItemCard extends StatelessWidget {
-  final Item item;
-  final String categoryName;
-  final IconData categoryIcon;
-  final VoidCallback? onTap;
-
   const ItemCard({
     super.key,
     required this.item,
     required this.categoryName,
     required this.categoryIcon,
+    this.locationName,
     this.onTap,
+    this.onLongPress,
+    this.isSelectionMode = false,
+    this.isSelected = false,
   });
+  final Item item;
+  final String categoryName;
+  final IconData categoryIcon;
+  final String? locationName;
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+  final bool isSelectionMode;
+  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      color: isSelected ? colorScheme.primaryContainer.withOpacity(0.5) : null,
       child: InkWell(
         onTap: onTap,
+        onLongPress: onLongPress,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              ItemThumbnail(
-                imagePath: item.imagePath,
-                size: 60,
-              ),
+              if (isSelectionMode) ...[
+                Checkbox(value: isSelected, onChanged: (_) => onTap?.call()),
+                const SizedBox(width: 8),
+              ],
+              ItemThumbnail(imagePath: item.imagePath, size: 60),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -42,24 +54,65 @@ class ItemCard extends StatelessWidget {
                     Text(
                       item.name,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                        fontWeight: FontWeight.w600,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    CategoryBadge(
-                      categoryName: categoryName,
-                      icon: categoryIcon,
-                      isCompact: true,
+                    Row(
+                      children: [
+                        CategoryBadge(
+                          categoryName: categoryName,
+                          icon: categoryIcon,
+                          isCompact: true,
+                        ),
+                        if (locationName != null) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.tertiaryContainer,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.place_outlined,
+                                  size: 12,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onTertiaryContainer,
+                                ),
+                                const SizedBox(width: 2),
+                                Text(
+                                  locationName!,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onTertiaryContainer,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                     if (item.notes != null) ...[
                       const SizedBox(height: 4),
                       Text(
                         item.notes!,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            ),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -70,7 +123,10 @@ class ItemCard extends StatelessWidget {
               if (item.quantity > 1) ...[
                 const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.secondaryContainer,
                     borderRadius: BorderRadius.circular(12),

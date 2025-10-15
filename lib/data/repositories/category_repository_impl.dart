@@ -5,9 +5,9 @@ import 'package:home_ai_index/data/repositories/category_repository.dart';
 
 /// Implementation of CategoryRepository using SQLite
 class CategoryRepositoryImpl implements CategoryRepository {
-  final DatabaseHelper _databaseHelper;
 
   CategoryRepositoryImpl(this._databaseHelper);
+  final DatabaseHelper _databaseHelper;
 
   @override
   Future<List<Category>> getCategories() async {

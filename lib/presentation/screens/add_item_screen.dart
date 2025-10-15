@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:home_ai_index/data/models/category.dart';
+import 'package:home_ai_index/data/models/location.dart';
+import 'package:home_ai_index/presentation/viewmodels/add_item_viewmodel.dart';
+import 'package:home_ai_index/presentation/viewmodels/locations_viewmodel.dart';
+import 'package:home_ai_index/presentation/widgets/location/location_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-
-import 'package:home_ai_index/data/models/category.dart';
-import 'package:home_ai_index/presentation/viewmodels/add_item_viewmodel.dart';
 
 /// Screen for adding new items with image recognition
 class AddItemScreen extends StatefulWidget {
@@ -43,18 +45,13 @@ class _AddItemScreenState extends State<AddItemScreen> {
       appBar: AppBar(
         title: const Text('Add Item'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: _saveItem,
-          ),
+          IconButton(icon: const Icon(Icons.check), onPressed: _saveItem),
         ],
       ),
       body: Consumer<AddItemViewModel>(
         builder: (context, viewModel, child) {
           if (viewModel.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           return SingleChildScrollView(
@@ -171,9 +168,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
                 Text(
                   'AI Recognition',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -181,15 +178,15 @@ class _AddItemScreenState extends State<AddItemScreen> {
             Text(
               'Detected: ${result.label}',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  ),
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
               'Confidence: ${(result.confidence * 100).toStringAsFixed(1)}%',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  ),
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              ),
             ),
           ],
         ),
@@ -222,7 +219,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
   Widget _buildCategoryField(AddItemViewModel viewModel) {
     return DropdownButtonFormField<String>(
-      value: viewModel.selectedCategory,
+      initialValue: viewModel.selectedCategory,
       decoration: const InputDecoration(
         labelText: 'Category *',
         border: OutlineInputBorder(),
@@ -232,7 +229,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
           value: category.id,
           child: Row(
             children: [
-              Icon(IconData(category.iconCodePoint, fontFamily: 'MaterialIcons')),
+              Icon(
+                IconData(category.iconCodePoint, fontFamily: 'MaterialIcons'),
+              ),
               const SizedBox(width: 8),
               Text(category.name),
             ],
@@ -254,20 +253,40 @@ class _AddItemScreenState extends State<AddItemScreen> {
   }
 
   Widget _buildLocationField(AddItemViewModel viewModel) {
-    return TextFormField(
-      initialValue: viewModel.selectedLocation,
-      decoration: const InputDecoration(
-        labelText: 'Location *',
-        hintText: 'e.g., Kitchen, Bedroom',
-        border: OutlineInputBorder(),
-      ),
-      validator: (value) {
-        if (value == null || value.trim().isEmpty) {
-          return 'Location is required';
+    return InkWell(
+      onTap: () async {
+        final selectedLocation = await showDialog<Location?>(
+          context: context,
+          builder: (context) => ChangeNotifierProvider(
+            create: (_) =>
+                LocationsViewModel(locationRepository: context.read())
+                  ..loadLocations(),
+            child: const LocationPicker(),
+          ),
+        );
+        if (selectedLocation != null) {
+          viewModel.setLocation(selectedLocation.id);
+        } else {
+          // User selected "No location"
+          viewModel.setLocation(null);
         }
-        return null;
       },
-      onChanged: (value) => viewModel.setLocation(value),
+      child: InputDecorator(
+        decoration: const InputDecoration(
+          labelText: 'Location',
+          hintText: 'Tap to select location',
+          border: OutlineInputBorder(),
+          suffixIcon: Icon(Icons.place_outlined),
+        ),
+        child: Text(
+          viewModel.selectedLocation ?? 'No location selected',
+          style: TextStyle(
+            color: viewModel.selectedLocation == null
+                ? Theme.of(context).hintColor
+                : null,
+          ),
+        ),
+      ),
     );
   }
 
@@ -322,7 +341,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
     );
   }
 
-  Future<void> _pickImage(ImageSource source, AddItemViewModel viewModel) async {
+  Future<void> _pickImage(
+    ImageSource source,
+    AddItemViewModel viewModel,
+  ) async {
     await viewModel.pickImage(source);
   }
 
@@ -336,9 +358,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
     if (success && mounted) {
       Navigator.of(context).pop(true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Item saved successfully')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Item saved successfully')));
     }
   }
 }

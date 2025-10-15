@@ -8,8 +8,19 @@ abstract class ItemRepository {
   /// Retrieves an item by its ID
   Future<Item?> getItemById(String id);
 
-  /// Retrieves all items
-  Future<List<Item>> getItems();
+  /// Retrieves all items, optionally filtered by category and/or location
+  ///
+  /// [categoryId]: Filter items by category (optional)
+  /// [locationId]: Filter items by location (optional)
+  /// [includeUnlocated]: Include items without location when filtering by location
+  ///
+  /// Returns: List of items matching filters
+  /// Throws: DatabaseException on query error
+  Future<List<Item>> getItems({
+    String? categoryId,
+    String? locationId,
+    bool includeUnlocated = false,
+  });
 
   /// Retrieves items filtered by category
   Future<List<Item>> getItemsByCategory(String categoryId);

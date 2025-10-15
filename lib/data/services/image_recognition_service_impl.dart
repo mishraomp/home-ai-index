@@ -1,21 +1,20 @@
-import 'dart:typed_data';
-
 import 'package:flutter/services.dart';
-import 'package:image/image.dart' as img;
-import 'package:tflite_flutter/tflite_flutter.dart';
-
 import 'package:home_ai_index/core/exceptions.dart' as app_exceptions;
 import 'package:home_ai_index/data/models/image_recognition_result.dart';
 import 'package:home_ai_index/data/services/image_recognition_service.dart';
+import 'package:image/image.dart' as img;
+import 'package:tflite_flutter/tflite_flutter.dart';
 
 /// Implementation of ImageRecognitionService using TensorFlow Lite
 class ImageRecognitionServiceImpl implements ImageRecognitionService {
+
+  ImageRecognitionServiceImpl(this._interpreter, this._labels);
   final Interpreter _interpreter;
   final List<String> _labels;
-  
+
   // MobileNet v2 expects 224x224 RGB images
   static const int _inputSize = 224;
-  
+
   // Category mapping for common household items
   static const Map<String, String> _labelToCategoryMap = {
     // Groceries
@@ -29,7 +28,7 @@ class ImageRecognitionServiceImpl implements ImageRecognitionService {
     'meat': 'groceries',
     'vegetable': 'groceries',
     'fruit': 'groceries',
-    
+
     // Electronics
     'laptop': 'electronics',
     'phone': 'electronics',
@@ -40,7 +39,7 @@ class ImageRecognitionServiceImpl implements ImageRecognitionService {
     'monitor': 'electronics',
     'keyboard': 'electronics',
     'mouse': 'electronics',
-    
+
     // Tools
     'hammer': 'tools',
     'screwdriver': 'tools',
@@ -48,7 +47,7 @@ class ImageRecognitionServiceImpl implements ImageRecognitionService {
     'drill': 'tools',
     'saw': 'tools',
     'pliers': 'tools',
-    
+
     // Kitchenware
     'plate': 'kitchenware',
     'bowl': 'kitchenware',
@@ -58,46 +57,44 @@ class ImageRecognitionServiceImpl implements ImageRecognitionService {
     'spoon': 'kitchenware',
     'pot': 'kitchenware',
     'pan': 'kitchenware',
-    
+
     // Cleaning
     'vacuum': 'cleaning',
     'mop': 'cleaning',
     'broom': 'cleaning',
     'detergent': 'cleaning',
-    
+
     // Toys
     'toy': 'toys',
     'doll': 'toys',
     'ball': 'toys',
     'puzzle': 'toys',
-    
+
     // Clothing
     'shirt': 'clothing',
     'pants': 'clothing',
     'dress': 'clothing',
     'shoe': 'clothing',
     'jacket': 'clothing',
-    
+
     // Furniture
     'chair': 'furniture',
     'table': 'furniture',
     'sofa': 'furniture',
     'bed': 'furniture',
     'desk': 'furniture',
-    
+
     // Sports
     'basketball': 'sports',
     'football': 'sports',
     'tennis': 'sports',
     'bicycle': 'sports',
-    
+
     // Books
     'book': 'books',
     'magazine': 'books',
     'notebook': 'books',
   };
-
-  ImageRecognitionServiceImpl(this._interpreter, this._labels);
 
   /// Factory constructor to initialize service from model file and labels
   static Future<ImageRecognitionServiceImpl> create(
@@ -107,11 +104,11 @@ class ImageRecognitionServiceImpl implements ImageRecognitionService {
     try {
       // Load the model
       final interpreter = await Interpreter.fromAsset(modelPath);
-      
+
       // Load the labels
       final labelsData = await rootBundle.loadString(labelsPath);
       final labels = labelsData.split('\n').map((e) => e.trim()).toList();
-      
+
       return ImageRecognitionServiceImpl(interpreter, labels);
     } catch (e) {
       throw app_exceptions.ModelNotInitializedException(
@@ -126,7 +123,7 @@ class ImageRecognitionServiceImpl implements ImageRecognitionService {
       // Decode image
       final image = img.decodeImage(imageBytes);
       if (image == null) {
-        throw app_exceptions.ImageProcessingException(
+        throw const app_exceptions.ImageProcessingException(
           'Failed to decode image bytes',
         );
       }
@@ -164,7 +161,7 @@ class ImageRecognitionServiceImpl implements ImageRecognitionService {
     } catch (e) {
       // Catch decoding errors and other processing errors
       if (e is RangeError || e is FormatException) {
-        throw app_exceptions.ImageProcessingException(
+        throw const app_exceptions.ImageProcessingException(
           'Invalid image format or corrupted data',
         );
       }
@@ -188,17 +185,14 @@ class ImageRecognitionServiceImpl implements ImageRecognitionService {
       1,
       (_) => List.generate(
         _inputSize,
-        (y) => List.generate(
-          _inputSize,
-          (x) {
-            final pixel = resized.getPixel(x, y);
-            return [
-              pixel.r / 255.0, // Normalize to 0-1
-              pixel.g / 255.0,
-              pixel.b / 255.0,
-            ];
-          },
-        ),
+        (y) => List.generate(_inputSize, (x) {
+          final pixel = resized.getPixel(x, y);
+          return [
+            pixel.r / 255.0, // Normalize to 0-1
+            pixel.g / 255.0,
+            pixel.b / 255.0,
+          ];
+        }),
       ),
     );
 
@@ -216,12 +210,12 @@ class ImageRecognitionServiceImpl implements ImageRecognitionService {
   @override
   String mapLabelToCategory(String label) {
     final normalizedLabel = label.toLowerCase().trim();
-    
+
     // Check direct mapping
     if (_labelToCategoryMap.containsKey(normalizedLabel)) {
       return _labelToCategoryMap[normalizedLabel]!;
     }
-    
+
     // Check partial matches
     for (final entry in _labelToCategoryMap.entries) {
       if (normalizedLabel.contains(entry.key) ||
@@ -229,7 +223,7 @@ class ImageRecognitionServiceImpl implements ImageRecognitionService {
         return entry.value;
       }
     }
-    
+
     // Default to 'other' if no match found
     return 'other';
   }

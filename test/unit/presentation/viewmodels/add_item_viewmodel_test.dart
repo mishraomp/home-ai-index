@@ -61,12 +61,23 @@ void main() {
 
       test('should load categories on init', () async {
         final categories = [
-          Category(id: '1', name: 'Groceries', iconCodePoint: 0xe532, isCustom: false),
-          Category(id: '2', name: 'Electronics', iconCodePoint: 0xe30a, isCustom: false),
+          Category(
+            id: '1',
+            name: 'Groceries',
+            iconCodePoint: 0xe532,
+            isCustom: false,
+          ),
+          Category(
+            id: '2',
+            name: 'Electronics',
+            iconCodePoint: 0xe30a,
+            isCustom: false,
+          ),
         ];
 
-        when(mockCategoryRepository.getCategories())
-            .thenAnswer((_) async => categories);
+        when(
+          mockCategoryRepository.getCategories(),
+        ).thenAnswer((_) async => categories);
 
         await viewModel.loadCategories();
 
@@ -76,21 +87,30 @@ void main() {
     });
 
     group('pickImage', () {
-      test('should pick image from camera and process it', () async {
-        // Note: XFile.readAsBytes() reads from actual file system
-        // This test would need integration testing or a wrapper around XFile
-        // For now, we'll skip this test and rely on integration tests
-        // The logic flow is validated through other unit tests
-      }, skip: 'XFile.readAsBytes() requires file system access');
+      test(
+        'should pick image from camera and process it',
+        () async {
+          // Note: XFile.readAsBytes() reads from actual file system
+          // This test would need integration testing or a wrapper around XFile
+          // For now, we'll skip this test and rely on integration tests
+          // The logic flow is validated through other unit tests
+        },
+        skip: 'XFile.readAsBytes() requires file system access',
+      );
 
-      test('should pick image from gallery and process it', () async {
-        // Note: XFile.readAsBytes() requires file system access
-        // Integration tests will cover the full flow
-      }, skip: 'XFile.readAsBytes() requires file system access');
+      test(
+        'should pick image from gallery and process it',
+        () async {
+          // Note: XFile.readAsBytes() requires file system access
+          // Integration tests will cover the full flow
+        },
+        skip: 'XFile.readAsBytes() requires file system access',
+      );
 
       test('should handle user canceling image picker', () async {
-        when(mockImagePicker.pickImage(source: ImageSource.camera))
-            .thenAnswer((_) async => null);
+        when(
+          mockImagePicker.pickImage(source: ImageSource.camera),
+        ).thenAnswer((_) async => null);
 
         await viewModel.pickImage(ImageSource.camera);
 
@@ -104,10 +124,12 @@ void main() {
       test('should set error message on image processing failure', () async {
         final mockXFile = XFile('test_path.jpg');
 
-        when(mockImagePicker.pickImage(source: ImageSource.camera))
-            .thenAnswer((_) async => mockXFile);
-        when(mockImageRepository.saveImage(any, any))
-            .thenThrow(app_exceptions.ImageProcessingException('Failed to save'));
+        when(
+          mockImagePicker.pickImage(source: ImageSource.camera),
+        ).thenAnswer((_) async => mockXFile);
+        when(
+          mockImageRepository.saveImage(any, any),
+        ).thenThrow(app_exceptions.ImageProcessingException('Failed to save'));
 
         await viewModel.pickImage(ImageSource.camera);
 
@@ -117,10 +139,14 @@ void main() {
         expect(viewModel.selectedImagePath, isNull);
       });
 
-      test('should set loading state during processing', () async {
-        // Note: XFile.readAsBytes() requires file system access
-        // Integration tests will cover loading state behavior
-      }, skip: 'XFile.readAsBytes() requires file system access');
+      test(
+        'should set loading state during processing',
+        () async {
+          // Note: XFile.readAsBytes() requires file system access
+          // Integration tests will cover loading state behavior
+        },
+        skip: 'XFile.readAsBytes() requires file system access',
+      );
     });
 
     group('recognizeImage', () {
@@ -132,8 +158,9 @@ void main() {
           suggestedCategory: 'groceries',
         );
 
-        when(mockRecognitionService.classifyImage(any))
-            .thenAnswer((_) async => recognitionResult);
+        when(
+          mockRecognitionService.classifyImage(any),
+        ).thenAnswer((_) async => recognitionResult);
 
         await viewModel.recognizeImage(imageBytes);
 
@@ -151,8 +178,9 @@ void main() {
           suggestedCategory: 'other',
         );
 
-        when(mockRecognitionService.classifyImage(any))
-            .thenAnswer((_) async => recognitionResult);
+        when(
+          mockRecognitionService.classifyImage(any),
+        ).thenAnswer((_) async => recognitionResult);
 
         await viewModel.recognizeImage(imageBytes);
 
@@ -164,8 +192,9 @@ void main() {
       test('should handle recognition errors', () async {
         final imageBytes = Uint8List.fromList([1, 2, 3]);
 
-        when(mockRecognitionService.classifyImage(any))
-            .thenThrow(app_exceptions.ModelNotInitializedException());
+        when(
+          mockRecognitionService.classifyImage(any),
+        ).thenThrow(app_exceptions.ModelNotInitializedException());
 
         await viewModel.recognizeImage(imageBytes);
 
@@ -183,9 +212,8 @@ void main() {
 
       test('should save item with all details', () async {
         viewModel.setSelectedImagePath('image_path.jpg');
-        
-        when(mockItemRepository.createItem(any))
-            .thenAnswer((_) async => '123');
+
+        when(mockItemRepository.createItem(any)).thenAnswer((_) async => '123');
 
         final result = await viewModel.saveItem();
 
@@ -206,8 +234,9 @@ void main() {
       });
 
       test('should handle save errors', () async {
-        when(mockItemRepository.createItem(any))
-            .thenThrow(app_exceptions.DatabaseException('Save failed'));
+        when(
+          mockItemRepository.createItem(any),
+        ).thenThrow(app_exceptions.DatabaseException('Save failed'));
 
         final result = await viewModel.saveItem();
 
@@ -224,8 +253,7 @@ void main() {
         viewModel.setNotes('Test notes');
         viewModel.setSelectedImagePath('test.jpg');
 
-        when(mockItemRepository.createItem(any))
-            .thenAnswer((invocation) async {
+        when(mockItemRepository.createItem(any)).thenAnswer((invocation) async {
           final item = invocation.positionalArguments[0] as Item;
           expect(item.name, 'Test Item');
           expect(item.categoryId, 'electronics');

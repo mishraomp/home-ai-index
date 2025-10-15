@@ -6,49 +6,13 @@ import 'package:equatable/equatable.dart';
 /// Items belong to categories and locations, and can have expiration dates,
 /// images, and ML-detected labels.
 class Item extends Equatable {
-  /// Unique identifier (UUID format)
-  final String id;
-
-  /// Display name of the item
-  final String name;
-
-  /// Optional notes or description
-  final String? notes;
-
-  /// Quantity of this item (default 1)
-  final int quantity;
-
-  /// ID of the category this item belongs to
-  final String categoryId;
-
-  /// ID of the current location
-  final String locationId;
-
-  /// Optional expiration date (for perishables)
-  final DateTime? expirationDate;
-
-  /// Path to the item's image file (if captured)
-  final String? imagePath;
-
-  /// ML-detected label from image recognition
-  final String? mlDetectedLabel;
-
-  /// Confidence score of ML detection (0.0 to 1.0)
-  final double? mlConfidenceScore;
-
-  /// Timestamp when item was added to inventory
-  final DateTime addedAt;
-
-  /// Timestamp of last update
-  final DateTime updatedAt;
-
   const Item({
     required this.id,
     required this.name,
     this.notes,
     required this.quantity,
     required this.categoryId,
-    required this.locationId,
+    this.locationId,
     this.expirationDate,
     this.imagePath,
     this.mlDetectedLabel,
@@ -65,7 +29,7 @@ class Item extends Equatable {
       notes: json['notes'] as String?,
       quantity: json['quantity'] as int,
       categoryId: json['categoryId'] as String,
-      locationId: json['locationId'] as String,
+      locationId: json['locationId'] as String?,
       expirationDate: json['expirationDate'] != null
           ? DateTime.parse(json['expirationDate'] as String)
           : null,
@@ -85,7 +49,7 @@ class Item extends Equatable {
       notes: map['notes'] as String?,
       quantity: map['quantity'] as int,
       categoryId: map['category_id'] as String,
-      locationId: map['location_id'] as String,
+      locationId: map['location_id'] as String?,
       expirationDate: map['expiration_date'] != null
           ? DateTime.parse(map['expiration_date'] as String)
           : null,
@@ -96,6 +60,42 @@ class Item extends Equatable {
       updatedAt: DateTime.parse(map['updated_at'] as String),
     );
   }
+
+  /// Unique identifier (UUID format)
+  final String id;
+
+  /// Display name of the item
+  final String name;
+
+  /// Optional notes or description
+  final String? notes;
+
+  /// Quantity of this item (default 1)
+  final int quantity;
+
+  /// ID of the category this item belongs to
+  final String categoryId;
+
+  /// ID of the current location (nullable - items can be unlocated)
+  final String? locationId;
+
+  /// Optional expiration date (for perishables)
+  final DateTime? expirationDate;
+
+  /// Path to the item's image file (if captured)
+  final String? imagePath;
+
+  /// ML-detected label from image recognition
+  final String? mlDetectedLabel;
+
+  /// Confidence score of ML detection (0.0 to 1.0)
+  final double? mlConfidenceScore;
+
+  /// Timestamp when item was added to inventory
+  final DateTime addedAt;
+
+  /// Timestamp of last update
+  final DateTime updatedAt;
 
   /// Converts this Item to a JSON map
   Map<String, dynamic> toJson() {
@@ -134,31 +134,47 @@ class Item extends Equatable {
   }
 
   /// Creates a copy of this Item with some fields replaced
+  ///
+  /// For nullable fields (notes, locationId, expirationDate, imagePath,
+  /// mlDetectedLabel, mlConfidenceScore), use the corresponding update flags
+  /// to explicitly set them to null.
   Item copyWith({
     String? id,
     String? name,
     String? notes,
+    bool updateNotes = false,
     int? quantity,
     String? categoryId,
     String? locationId,
+    bool updateLocationId = false,
     DateTime? expirationDate,
+    bool updateExpirationDate = false,
     String? imagePath,
+    bool updateImagePath = false,
     String? mlDetectedLabel,
+    bool updateMlDetectedLabel = false,
     double? mlConfidenceScore,
+    bool updateMlConfidenceScore = false,
     DateTime? addedAt,
     DateTime? updatedAt,
   }) {
     return Item(
       id: id ?? this.id,
       name: name ?? this.name,
-      notes: notes ?? this.notes,
+      notes: updateNotes ? notes : this.notes,
       quantity: quantity ?? this.quantity,
       categoryId: categoryId ?? this.categoryId,
-      locationId: locationId ?? this.locationId,
-      expirationDate: expirationDate ?? this.expirationDate,
-      imagePath: imagePath ?? this.imagePath,
-      mlDetectedLabel: mlDetectedLabel ?? this.mlDetectedLabel,
-      mlConfidenceScore: mlConfidenceScore ?? this.mlConfidenceScore,
+      locationId: updateLocationId ? locationId : this.locationId,
+      expirationDate: updateExpirationDate
+          ? expirationDate
+          : this.expirationDate,
+      imagePath: updateImagePath ? imagePath : this.imagePath,
+      mlDetectedLabel: updateMlDetectedLabel
+          ? mlDetectedLabel
+          : this.mlDetectedLabel,
+      mlConfidenceScore: updateMlConfidenceScore
+          ? mlConfidenceScore
+          : this.mlConfidenceScore,
       addedAt: addedAt ?? this.addedAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

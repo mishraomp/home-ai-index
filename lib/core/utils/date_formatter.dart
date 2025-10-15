@@ -4,9 +4,8 @@
 /// for timestamps, expiration dates, and location history.
 library;
 
-import 'package:intl/intl.dart';
-
 import 'package:home_ai_index/core/constants/app_constants.dart';
+import 'package:intl/intl.dart';
 
 /// Formats a DateTime as a relative time string (e.g., "2 hours ago", "3 days ago")
 ///

@@ -5,14 +5,6 @@ import 'package:equatable/equatable.dart';
 /// Contains the detected label, confidence score, and suggested category
 /// from the on-device TensorFlow Lite model.
 class ImageRecognitionResult extends Equatable {
-  /// Detected label from the ML model
-  final String label;
-
-  /// Confidence score (0.0 to 1.0)
-  final double confidence;
-
-  /// Suggested category based on the label
-  final String suggestedCategory;
 
   const ImageRecognitionResult({
     required this.label,
@@ -28,6 +20,14 @@ class ImageRecognitionResult extends Equatable {
       suggestedCategory: json['suggestedCategory'] as String,
     );
   }
+  /// Detected label from the ML model
+  final String label;
+
+  /// Confidence score (0.0 to 1.0)
+  final double confidence;
+
+  /// Suggested category based on the label
+  final String suggestedCategory;
 
   /// Converts this ImageRecognitionResult to a JSON map
   Map<String, dynamic> toJson() {

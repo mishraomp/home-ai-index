@@ -9,10 +9,10 @@ import 'package:sqflite/sqflite.dart';
 /// Manages database creation, migrations, and provides the database instance.
 /// Implements the singleton pattern to ensure a single database connection.
 class DatabaseHelper {
-  static final DatabaseHelper instance = DatabaseHelper._internal();
-  static Database? _database;
 
   DatabaseHelper._internal();
+  static final DatabaseHelper instance = DatabaseHelper._internal();
+  static Database? _database;
 
   /// Gets the database instance, creating it if necessary
   Future<Database> get database async {
@@ -33,7 +33,7 @@ class DatabaseHelper {
     final databasesPath = await getDatabasesPath();
     final path = join(databasesPath, databaseName);
 
-    return await openDatabase(
+    return openDatabase(
       path,
       version: databaseVersion,
       onCreate: _onCreate,

@@ -1,12 +1,11 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:image/image.dart' as img;
-import 'package:path_provider/path_provider.dart';
-
 import 'package:home_ai_index/core/constants/app_constants.dart';
 import 'package:home_ai_index/core/exceptions.dart';
 import 'package:home_ai_index/data/repositories/image_repository.dart';
+import 'package:image/image.dart' as img;
+import 'package:path_provider/path_provider.dart';
 
 /// Implementation of ImageRepository for device file system
 class ImageRepositoryImpl implements ImageRepository {
@@ -43,7 +42,7 @@ class ImageRepositoryImpl implements ImageRepository {
       // Decode the image
       final image = img.decodeImage(imageBytes);
       if (image == null) {
-        throw ImageProcessingException('Failed to decode image');
+        throw const ImageProcessingException('Failed to decode image');
       }
 
       // Calculate thumbnail dimensions maintaining aspect ratio
@@ -72,7 +71,7 @@ class ImageRepositoryImpl implements ImageRepository {
       // Decode the image
       final image = img.decodeImage(imageBytes);
       if (image == null) {
-        throw ImageProcessingException('Failed to decode image');
+        throw const ImageProcessingException('Failed to decode image');
       }
 
       // Start with configured quality
@@ -91,7 +90,7 @@ class ImageRepositoryImpl implements ImageRepository {
 
       // If still too large, resize the image
       if (compressed.length > maxImageSizeBytes) {
-        final scale = 0.8;
+        const scale = 0.8;
         final resized = img.copyResize(
           image,
           width: (image.width * scale).round(),

@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 
 /// Widget to display a category badge with icon and label
 class CategoryBadge extends StatelessWidget {
-  final String categoryName;
-  final IconData icon;
-  final Color? color;
-  final bool isCompact;
 
   const CategoryBadge({
     super.key,
@@ -14,6 +10,10 @@ class CategoryBadge extends StatelessWidget {
     this.color,
     this.isCompact = false,
   });
+  final String categoryName;
+  final IconData icon;
+  final Color? color;
+  final bool isCompact;
 
   @override
   Widget build(BuildContext context) {

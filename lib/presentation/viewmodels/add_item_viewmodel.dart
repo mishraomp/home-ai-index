@@ -1,8 +1,4 @@
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart' hide Category;
-import 'package:image_picker/image_picker.dart';
-
 import 'package:home_ai_index/core/exceptions.dart' as app_exceptions;
 import 'package:home_ai_index/core/utils/validators.dart';
 import 'package:home_ai_index/data/models/category.dart';
@@ -12,26 +8,27 @@ import 'package:home_ai_index/data/repositories/category_repository.dart';
 import 'package:home_ai_index/data/repositories/image_repository.dart';
 import 'package:home_ai_index/data/repositories/item_repository.dart';
 import 'package:home_ai_index/data/services/image_recognition_service.dart';
+import 'package:image_picker/image_picker.dart';
 
 /// ViewModel for adding new items with image recognition
 class AddItemViewModel extends ChangeNotifier {
-  final ItemRepository _itemRepository;
-  final CategoryRepository _categoryRepository;
-  final ImageRepository _imageRepository;
-  final ImageRecognitionService _recognitionService;
-  final ImagePicker _imagePicker;
-
   AddItemViewModel({
     required ItemRepository itemRepository,
     required CategoryRepository categoryRepository,
     required ImageRepository imageRepository,
     required ImageRecognitionService recognitionService,
     ImagePicker? imagePicker,
-  })  : _itemRepository = itemRepository,
-        _categoryRepository = categoryRepository,
-        _imageRepository = imageRepository,
-        _recognitionService = recognitionService,
-        _imagePicker = imagePicker ?? ImagePicker();
+  }) : _itemRepository = itemRepository,
+       _categoryRepository = categoryRepository,
+       _imageRepository = imageRepository,
+       _recognitionService = recognitionService,
+       _imagePicker = imagePicker ?? ImagePicker();
+
+  final ItemRepository _itemRepository;
+  final CategoryRepository _categoryRepository;
+  final ImageRepository _imageRepository;
+  final ImageRecognitionService _recognitionService;
+  final ImagePicker _imagePicker;
 
   // State properties
   bool _isLoading = false;
@@ -53,7 +50,7 @@ class AddItemViewModel extends ChangeNotifier {
   String? get selectedImagePath => _selectedImagePath;
   ImageRecognitionResult? get recognitionResult => _recognitionResult;
   List<Category> get categories => _categories;
-  
+
   String get name => _name;
   String? get selectedCategory => _selectedCategory;
   String? get selectedLocation => _selectedLocation;
@@ -92,7 +89,7 @@ class AddItemViewModel extends ChangeNotifier {
 
       // Generate a temporary ID for the image (will be replaced with actual item ID later)
       final tempId = DateTime.now().millisecondsSinceEpoch.toString();
-      
+
       // Save image
       final savedPath = await _imageRepository.saveImage(imageBytes, tempId);
       _selectedImagePath = savedPath;
@@ -117,15 +114,13 @@ class AddItemViewModel extends ChangeNotifier {
     try {
       final result = await _recognitionService.classifyImage(imageBytes);
       _recognitionResult = result;
-      
+
       // Update suggestions
       if (_name.isEmpty) {
         _name = result.label;
       }
-      if (_selectedCategory == null) {
-        _selectedCategory = result.suggestedCategory;
-      }
-      
+      _selectedCategory ??= result.suggestedCategory;
+
       notifyListeners();
     } on app_exceptions.ModelNotInitializedException catch (e) {
       _errorMessage = 'Recognition failed: ${e.message}';
@@ -218,7 +213,7 @@ class AddItemViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setLocation(String value) {
+  void setLocation(String? value) {
     _selectedLocation = value;
     _clearError();
     notifyListeners();

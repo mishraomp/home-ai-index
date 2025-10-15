@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import 'package:home_ai_index/core/theme/app_theme.dart';
 import 'package:home_ai_index/data/datasources/local/database_helper.dart';
 import 'package:home_ai_index/data/repositories/category_repository.dart';
@@ -13,6 +11,7 @@ import 'package:home_ai_index/data/services/image_recognition_service.dart';
 import 'package:home_ai_index/data/services/image_recognition_service_impl.dart';
 import 'package:home_ai_index/presentation/screens/home_screen.dart';
 import 'package:home_ai_index/presentation/viewmodels/add_item_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 /// Entry point for Home AI Index application
 ///
@@ -38,22 +37,20 @@ void main() async {
     'assets/ml_models/mobilenet_v2.tflite',
   );
 
-  runApp(HomeAIIndexApp(
-    itemRepository: itemRepository,
-    categoryRepository: categoryRepository,
-    imageRepository: imageRepository,
-    recognitionService: recognitionService,
-  ));
+  runApp(
+    HomeAIIndexApp(
+      itemRepository: itemRepository,
+      categoryRepository: categoryRepository,
+      imageRepository: imageRepository,
+      recognitionService: recognitionService,
+    ),
+  );
 }
 
 /// Root application widget
 ///
 /// Sets up Provider for state management and MaterialApp with theme configuration.
 class HomeAIIndexApp extends StatelessWidget {
-  final ItemRepositoryImpl itemRepository;
-  final CategoryRepositoryImpl categoryRepository;
-  final ImageRepositoryImpl imageRepository;
-  final ImageRecognitionServiceImpl recognitionService;
 
   const HomeAIIndexApp({
     super.key,
@@ -62,6 +59,10 @@ class HomeAIIndexApp extends StatelessWidget {
     required this.imageRepository,
     required this.recognitionService,
   });
+  final ItemRepositoryImpl itemRepository;
+  final CategoryRepositoryImpl categoryRepository;
+  final ImageRepositoryImpl imageRepository;
+  final ImageRecognitionServiceImpl recognitionService;
 
   @override
   Widget build(BuildContext context) {

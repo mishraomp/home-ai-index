@@ -29,28 +29,30 @@ void main() {
     });
 
     group('classifyImage', () {
-      test('should return recognition result with label and confidence',
-          () async {
-        // Create a test image
-        final testImage = img.Image(width: 224, height: 224);
-        img.fill(testImage, color: img.ColorRgb8(128, 128, 128));
-        final imageBytes = Uint8List.fromList(img.encodeJpg(testImage));
+      test(
+        'should return recognition result with label and confidence',
+        () async {
+          // Create a test image
+          final testImage = img.Image(width: 224, height: 224);
+          img.fill(testImage, color: img.ColorRgb8(128, 128, 128));
+          final imageBytes = Uint8List.fromList(img.encodeJpg(testImage));
 
-        // Mock interpreter output - simulating model prediction
-        when(mockInterpreter.run(any, any)).thenAnswer((invocation) {
-          final output = invocation.positionalArguments[1] as List;
-          // Simulate a prediction: index 123 has confidence 0.85
-          output[0][123] = 0.85;
-        });
+          // Mock interpreter output - simulating model prediction
+          when(mockInterpreter.run(any, any)).thenAnswer((invocation) {
+            final output = invocation.positionalArguments[1] as List;
+            // Simulate a prediction: index 123 has confidence 0.85
+            output[0][123] = 0.85;
+          });
 
-        final result = await service.classifyImage(imageBytes);
+          final result = await service.classifyImage(imageBytes);
 
-        expect(result, isNotNull);
-        expect(result.label, isNotEmpty);
-        expect(result.confidence, greaterThanOrEqualTo(0.0));
-        expect(result.confidence, lessThanOrEqualTo(1.0));
-        verify(mockInterpreter.run(any, any)).called(1);
-      });
+          expect(result, isNotNull);
+          expect(result.label, isNotEmpty);
+          expect(result.confidence, greaterThanOrEqualTo(0.0));
+          expect(result.confidence, lessThanOrEqualTo(1.0));
+          verify(mockInterpreter.run(any, any)).called(1);
+        },
+      );
 
       test('should preprocess image to 224x224', () async {
         // Create a different sized image
@@ -121,18 +123,22 @@ void main() {
         );
       });
 
-      test('should throw ModelNotInitializedException if model fails',
-          () async {
-        final testImage = img.Image(width: 224, height: 224);
-        final imageBytes = Uint8List.fromList(img.encodeJpg(testImage));
+      test(
+        'should throw ModelNotInitializedException if model fails',
+        () async {
+          final testImage = img.Image(width: 224, height: 224);
+          final imageBytes = Uint8List.fromList(img.encodeJpg(testImage));
 
-        when(mockInterpreter.run(any, any)).thenThrow(Exception('Model error'));
+          when(
+            mockInterpreter.run(any, any),
+          ).thenThrow(Exception('Model error'));
 
-        expect(
-          () => service.classifyImage(imageBytes),
-          throwsA(isA<app_exceptions.ModelNotInitializedException>()),
-        );
-      });
+          expect(
+            () => service.classifyImage(imageBytes),
+            throwsA(isA<app_exceptions.ModelNotInitializedException>()),
+          );
+        },
+      );
     });
 
     group('mapLabelToCategory', () {

@@ -6,9 +6,8 @@ import 'package:home_ai_index/data/repositories/item_repository.dart';
 
 /// Implementation of ItemRepository using SQLite
 class ItemRepositoryImpl implements ItemRepository {
-  final DatabaseHelper _databaseHelper;
-
   ItemRepositoryImpl(this._databaseHelper);
+  final DatabaseHelper _databaseHelper;
 
   @override
   Future<String> createItem(Item item) async {
@@ -25,11 +24,7 @@ class ItemRepositoryImpl implements ItemRepository {
   Future<Item?> getItemById(String id) async {
     try {
       final db = await _databaseHelper.database;
-      final results = await db.query(
-        'items',
-        where: 'id = ?',
-        whereArgs: [id],
-      );
+      final results = await db.query('items', where: 'id = ?', whereArgs: [id]);
 
       if (results.isEmpty) {
         return null;
@@ -42,11 +37,39 @@ class ItemRepositoryImpl implements ItemRepository {
   }
 
   @override
-  Future<List<Item>> getItems() async {
+  Future<List<Item>> getItems({
+    String? categoryId,
+    String? locationId,
+    bool includeUnlocated = false,
+  }) async {
     try {
       final db = await _databaseHelper.database;
+
+      // Build WHERE clause based on filters
+      final whereClauses = <String>[];
+      final whereArgs = <dynamic>[];
+
+      if (categoryId != null) {
+        whereClauses.add('category_id = ?');
+        whereArgs.add(categoryId);
+      }
+
+      if (locationId != null) {
+        if (includeUnlocated) {
+          whereClauses.add('(location_id = ? OR location_id IS NULL)');
+        } else {
+          whereClauses.add('location_id = ?');
+        }
+        whereArgs.add(locationId);
+      } else if (includeUnlocated && locationId == null) {
+        // Special case: get only unlocated items
+        whereClauses.add('location_id IS NULL');
+      }
+
       final results = await db.query(
         'items',
+        where: whereClauses.isEmpty ? null : whereClauses.join(' AND '),
+        whereArgs: whereArgs.isEmpty ? null : whereArgs,
         orderBy: 'added_at DESC',
       );
 
