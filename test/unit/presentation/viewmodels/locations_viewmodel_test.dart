@@ -1,11 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-
 import 'package:home_ai_index/core/exceptions.dart';
 import 'package:home_ai_index/data/models/location.dart';
 import 'package:home_ai_index/data/repositories/location_repository.dart';
 import 'package:home_ai_index/presentation/viewmodels/locations_viewmodel.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
 @GenerateMocks([LocationRepository])
 import 'locations_viewmodel_test.mocks.dart';
@@ -116,9 +115,7 @@ void main() {
           expect(viewModel.errorMessage, isNotNull);
 
           // Arrange - second call succeeds
-          final locations = [
-            const Location(id: '1', name: 'Kitchen'),
-          ];
+          final locations = [const Location(id: '1', name: 'Kitchen')];
           when(
             mockLocationRepository.getLocations(),
           ).thenAnswer((_) async => locations);
@@ -246,9 +243,9 @@ void main() {
 
       test('should handle validation exception from repository', () async {
         // Arrange
-        when(
-          mockLocationRepository.createLocation(any),
-        ).thenThrow(const ValidationException('Maximum hierarchy depth exceeded'));
+        when(mockLocationRepository.createLocation(any)).thenThrow(
+          const ValidationException('Maximum hierarchy depth exceeded'),
+        );
 
         // Act
         await viewModel.createLocation('Too Deep', 'parent5');
@@ -277,14 +274,7 @@ void main() {
     group('updateLocation', () {
       test('should update location name successfully', () async {
         // Arrange
-        const existingLocation = Location(
-          id: '1',
-          name: 'Kitchen',
-        );
-        const updatedLocation = Location(
-          id: '1',
-          name: 'New Kitchen',
-        );
+        const updatedLocation = Location(id: '1', name: 'New Kitchen');
         when(
           mockLocationRepository.updateLocation(any),
         ).thenAnswer((_) async => updatedLocation);
@@ -356,9 +346,7 @@ void main() {
 
         // Assert
         expect(viewModel.errorMessage, isNull);
-        verify(
-          mockLocationRepository.deleteLocation('1'),
-        ).called(1);
+        verify(mockLocationRepository.deleteLocation('1')).called(1);
         verify(mockLocationRepository.getLocations()).called(1);
       });
 
@@ -387,9 +375,7 @@ void main() {
         await viewModel.deleteLocation('1', deleteItems: false);
 
         // Assert
-        verify(
-          mockLocationRepository.deleteLocation('1'),
-        ).called(1);
+        verify(mockLocationRepository.deleteLocation('1')).called(1);
       });
 
       test('should handle database exception on delete', () async {
@@ -514,9 +500,9 @@ void main() {
 
       test('should detect self-assignment', () async {
         // Arrange
-        when(
-          mockLocationRepository.validateLocationMove('1', '1'),
-        ).thenThrow(const ValidationException('Cannot move location to itself'));
+        when(mockLocationRepository.validateLocationMove('1', '1')).thenThrow(
+          const ValidationException('Cannot move location to itself'),
+        );
 
         // Act
         final isValid = await viewModel.validateLocationMove('1', '1');
