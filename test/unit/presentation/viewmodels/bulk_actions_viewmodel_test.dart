@@ -37,8 +37,8 @@ void main() {
         name: 'Item 1',
         categoryId: 'cat-1',
         quantity: 1,
-        addedAt: DateTime(2025, 1, 1),
-        updatedAt: DateTime(2025, 1, 1),
+        addedAt: DateTime(2025, 1),
+        updatedAt: DateTime(2025, 1),
         locationId: 'old-loc-1',
       ),
       Item(
@@ -46,8 +46,8 @@ void main() {
         name: 'Item 2',
         categoryId: 'cat-1',
         quantity: 1,
-        addedAt: DateTime(2025, 1, 1),
-        updatedAt: DateTime(2025, 1, 1),
+        addedAt: DateTime(2025, 1),
+        updatedAt: DateTime(2025, 1),
         locationId: 'old-loc-2',
       ),
       Item(
@@ -55,13 +55,12 @@ void main() {
         name: 'Item 3',
         categoryId: 'cat-1',
         quantity: 1,
-        addedAt: DateTime(2025, 1, 1),
-        updatedAt: DateTime(2025, 1, 1),
-        locationId: null,
+        addedAt: DateTime(2025, 1),
+        updatedAt: DateTime(2025, 1),
       ),
     ];
 
-    final testLocation = Location(id: 'new-loc', name: 'New Location');
+    const testLocation = Location(id: 'new-loc', name: 'New Location');
 
     group('Initial State', () {
       test('should have no error initially', () {
@@ -292,8 +291,8 @@ void main() {
           name: 'Item 1',
           categoryId: 'cat-1',
           quantity: 1,
-          addedAt: DateTime(2025, 1, 1),
-          updatedAt: DateTime(2025, 1, 1),
+          addedAt: DateTime(2025, 1),
+          updatedAt: DateTime(2025, 1),
           locationId: 'new-loc',
         );
         when(

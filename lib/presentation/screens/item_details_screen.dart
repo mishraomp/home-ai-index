@@ -253,7 +253,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
 
                   // Category dropdown
                   DropdownButtonFormField<String>(
-                    value: item.categoryId,
+                    initialValue: item.categoryId,
                     decoration: const InputDecoration(
                       labelText: 'Category',
                       border: OutlineInputBorder(),

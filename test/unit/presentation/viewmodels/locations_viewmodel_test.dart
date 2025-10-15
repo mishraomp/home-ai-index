@@ -35,9 +35,9 @@ void main() {
       test('should load all locations successfully', () async {
         // Arrange
         final locations = [
-          Location(id: '1', name: 'Kitchen', parentId: null),
-          Location(id: '2', name: 'Bedroom', parentId: null),
-          Location(id: '3', name: 'Closet', parentId: '2'),
+          const Location(id: '1', name: 'Kitchen'),
+          const Location(id: '2', name: 'Bedroom'),
+          const Location(id: '3', name: 'Closet', parentId: '2'),
         ];
         when(
           mockLocationRepository.getLocations(),
@@ -56,8 +56,8 @@ void main() {
       test('should load root locations only when rootOnly is true', () async {
         // Arrange
         final rootLocations = [
-          Location(id: '1', name: 'Kitchen', parentId: null),
-          Location(id: '2', name: 'Bedroom', parentId: null),
+          const Location(id: '1', name: 'Kitchen'),
+          const Location(id: '2', name: 'Bedroom'),
         ];
         when(
           mockLocationRepository.getLocations(rootOnly: true),
@@ -74,9 +74,9 @@ void main() {
 
       test('should set loading state while fetching', () async {
         // Arrange
-        final locations = [Location(id: '1', name: 'Kitchen', parentId: null)];
+        final locations = [const Location(id: '1', name: 'Kitchen')];
         when(mockLocationRepository.getLocations()).thenAnswer((_) async {
-          await Future.delayed(Duration(milliseconds: 100));
+          await Future.delayed(const Duration(milliseconds: 100));
           return locations;
         });
 
@@ -94,7 +94,7 @@ void main() {
         // Arrange
         when(
           mockLocationRepository.getLocations(),
-        ).thenThrow(DatabaseException('Database error'));
+        ).thenThrow(const DatabaseException('Database error'));
 
         // Act
         await viewModel.loadLocations();
@@ -111,13 +111,13 @@ void main() {
           // Arrange - first call fails
           when(
             mockLocationRepository.getLocations(),
-          ).thenThrow(DatabaseException('Database error'));
+          ).thenThrow(const DatabaseException('Database error'));
           await viewModel.loadLocations();
           expect(viewModel.errorMessage, isNotNull);
 
           // Arrange - second call succeeds
           final locations = [
-            Location(id: '1', name: 'Kitchen', parentId: null),
+            const Location(id: '1', name: 'Kitchen'),
           ];
           when(
             mockLocationRepository.getLocations(),
@@ -137,8 +137,8 @@ void main() {
       test('should load child locations for parent', () async {
         // Arrange
         final childLocations = [
-          Location(id: '3', name: 'Top Shelf', parentId: '2'),
-          Location(id: '4', name: 'Bottom Drawer', parentId: '2'),
+          const Location(id: '3', name: 'Top Shelf', parentId: '2'),
+          const Location(id: '4', name: 'Bottom Drawer', parentId: '2'),
         ];
         when(
           mockLocationRepository.getChildLocations('2'),
@@ -169,7 +169,7 @@ void main() {
         // Arrange
         when(
           mockLocationRepository.getChildLocations('1'),
-        ).thenThrow(DatabaseException('Database error'));
+        ).thenThrow(const DatabaseException('Database error'));
 
         // Act
         await viewModel.loadChildLocations('1');
@@ -185,7 +185,7 @@ void main() {
     group('createLocation', () {
       test('should create root location successfully', () async {
         // Arrange
-        final newLocation = Location(id: '1', name: 'Kitchen', parentId: null);
+        const newLocation = Location(id: '1', name: 'Kitchen');
         when(
           mockLocationRepository.createLocation(any),
         ).thenAnswer((_) async => newLocation);
@@ -204,7 +204,7 @@ void main() {
 
       test('should create child location successfully', () async {
         // Arrange
-        final childLocation = Location(id: '2', name: 'Pantry', parentId: '1');
+        const childLocation = Location(id: '2', name: 'Pantry', parentId: '1');
         when(
           mockLocationRepository.createLocation(any),
         ).thenAnswer((_) async => childLocation);
@@ -248,7 +248,7 @@ void main() {
         // Arrange
         when(
           mockLocationRepository.createLocation(any),
-        ).thenThrow(ValidationException('Maximum hierarchy depth exceeded'));
+        ).thenThrow(const ValidationException('Maximum hierarchy depth exceeded'));
 
         // Act
         await viewModel.createLocation('Too Deep', 'parent5');
@@ -264,7 +264,7 @@ void main() {
         // Arrange
         when(
           mockLocationRepository.createLocation(any),
-        ).thenThrow(DatabaseException('Database error'));
+        ).thenThrow(const DatabaseException('Database error'));
 
         // Act
         await viewModel.createLocation('Kitchen', null);
@@ -277,15 +277,13 @@ void main() {
     group('updateLocation', () {
       test('should update location name successfully', () async {
         // Arrange
-        final existingLocation = Location(
+        const existingLocation = Location(
           id: '1',
           name: 'Kitchen',
-          parentId: null,
         );
-        final updatedLocation = Location(
+        const updatedLocation = Location(
           id: '1',
           name: 'New Kitchen',
-          parentId: null,
         );
         when(
           mockLocationRepository.updateLocation(any),
@@ -319,7 +317,7 @@ void main() {
         // Arrange
         when(
           mockLocationRepository.updateLocation(any),
-        ).thenThrow(LocationNotFoundException('Location not found'));
+        ).thenThrow(const LocationNotFoundException('Location not found'));
 
         // Act
         await viewModel.updateLocation('999', 'New Name');
@@ -332,7 +330,7 @@ void main() {
         // Arrange
         when(
           mockLocationRepository.updateLocation(any),
-        ).thenThrow(DatabaseException('Database error'));
+        ).thenThrow(const DatabaseException('Database error'));
 
         // Act
         await viewModel.updateLocation('1', 'New Name');
@@ -349,7 +347,7 @@ void main() {
           mockLocationRepository.hasItems('1'),
         ).thenAnswer((_) async => false);
         when(
-          mockLocationRepository.deleteLocation('1', deleteItems: false),
+          mockLocationRepository.deleteLocation('1'),
         ).thenAnswer((_) async => true);
         when(mockLocationRepository.getLocations()).thenAnswer((_) async => []);
 
@@ -359,7 +357,7 @@ void main() {
         // Assert
         expect(viewModel.errorMessage, isNull);
         verify(
-          mockLocationRepository.deleteLocation('1', deleteItems: false),
+          mockLocationRepository.deleteLocation('1'),
         ).called(1);
         verify(mockLocationRepository.getLocations()).called(1);
       });
@@ -381,7 +379,7 @@ void main() {
       test('should delete location and unassign items', () async {
         // Arrange
         when(
-          mockLocationRepository.deleteLocation('1', deleteItems: false),
+          mockLocationRepository.deleteLocation('1'),
         ).thenAnswer((_) async => true);
         when(mockLocationRepository.getLocations()).thenAnswer((_) async => []);
 
@@ -390,15 +388,15 @@ void main() {
 
         // Assert
         verify(
-          mockLocationRepository.deleteLocation('1', deleteItems: false),
+          mockLocationRepository.deleteLocation('1'),
         ).called(1);
       });
 
       test('should handle database exception on delete', () async {
         // Arrange
         when(
-          mockLocationRepository.deleteLocation('1', deleteItems: false),
-        ).thenThrow(DatabaseException('Database error'));
+          mockLocationRepository.deleteLocation('1'),
+        ).thenThrow(const DatabaseException('Database error'));
 
         // Act
         await viewModel.deleteLocation('1', deleteItems: false);
@@ -412,9 +410,9 @@ void main() {
       test('should get full location path', () async {
         // Arrange
         final path = [
-          Location(id: '1', name: 'Bedroom', parentId: null),
-          Location(id: '2', name: 'Closet', parentId: '1'),
-          Location(id: '3', name: 'Top Shelf', parentId: '2'),
+          const Location(id: '1', name: 'Bedroom'),
+          const Location(id: '2', name: 'Closet', parentId: '1'),
+          const Location(id: '3', name: 'Top Shelf', parentId: '2'),
         ];
         when(
           mockLocationRepository.getLocationPath('3'),
@@ -432,7 +430,7 @@ void main() {
 
       test('should get path for root location', () async {
         // Arrange
-        final path = [Location(id: '1', name: 'Kitchen', parentId: null)];
+        final path = [const Location(id: '1', name: 'Kitchen')];
         when(
           mockLocationRepository.getLocationPath('1'),
         ).thenAnswer((_) async => path);
@@ -449,7 +447,7 @@ void main() {
         // Arrange
         when(
           mockLocationRepository.getLocationPath('999'),
-        ).thenThrow(LocationNotFoundException('Location not found'));
+        ).thenThrow(const LocationNotFoundException('Location not found'));
 
         // Act & Assert
         expect(
@@ -462,7 +460,7 @@ void main() {
     group('selectLocation', () {
       test('should select location', () {
         // Arrange
-        final location = Location(id: '1', name: 'Kitchen', parentId: null);
+        const location = Location(id: '1', name: 'Kitchen');
 
         // Act
         viewModel.selectLocation(location);
@@ -473,7 +471,7 @@ void main() {
 
       test('should clear selection', () {
         // Arrange
-        final location = Location(id: '1', name: 'Kitchen', parentId: null);
+        const location = Location(id: '1', name: 'Kitchen');
         viewModel.selectLocation(location);
         expect(viewModel.selectedLocation, isNotNull);
 
@@ -504,7 +502,7 @@ void main() {
         // Arrange
         when(
           mockLocationRepository.validateLocationMove('1', '2'),
-        ).thenThrow(ValidationException('Circular reference detected'));
+        ).thenThrow(const ValidationException('Circular reference detected'));
 
         // Act
         final isValid = await viewModel.validateLocationMove('1', '2');
@@ -518,7 +516,7 @@ void main() {
         // Arrange
         when(
           mockLocationRepository.validateLocationMove('1', '1'),
-        ).thenThrow(ValidationException('Cannot move location to itself'));
+        ).thenThrow(const ValidationException('Cannot move location to itself'));
 
         // Act
         final isValid = await viewModel.validateLocationMove('1', '1');
@@ -537,7 +535,7 @@ void main() {
         // Arrange - trigger an error
         when(
           mockLocationRepository.getLocations(),
-        ).thenThrow(DatabaseException('Database error'));
+        ).thenThrow(const DatabaseException('Database error'));
         await viewModel.loadLocations();
         expect(viewModel.errorMessage, isNotNull);
 

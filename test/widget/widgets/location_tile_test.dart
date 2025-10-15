@@ -9,7 +9,7 @@ void main() {
     late Location testLocation;
 
     setUp(() {
-      testLocation = const Location(id: '1', name: 'Garage', parentId: null);
+      testLocation = const Location(id: '1', name: 'Garage');
     });
 
     Widget createTestWidget({
@@ -90,7 +90,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
-        createTestWidget(location: testLocation, hasChildren: false),
+        createTestWidget(location: testLocation),
       );
 
       expect(find.text('Has sublocations'), findsNothing);

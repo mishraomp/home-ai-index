@@ -107,7 +107,7 @@ void main() {
       WidgetTester tester,
     ) async {
       when(mockViewModel.recognitionResult).thenReturn(
-        ImageRecognitionResult(
+        const ImageRecognitionResult(
           label: 'banana',
           confidence: 0.95,
           suggestedCategory: 'Food',
@@ -214,8 +214,8 @@ void main() {
       WidgetTester tester,
     ) async {
       when(mockViewModel.categories).thenReturn([
-        Category(id: '1', name: 'Food', iconCodePoint: 0xe8cc, isCustom: false),
-        Category(
+        const Category(id: '1', name: 'Food', iconCodePoint: 0xe8cc, isCustom: false),
+        const Category(
           id: '2',
           name: 'Electronics',
           iconCodePoint: 0xe1b1,

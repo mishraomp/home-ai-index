@@ -71,7 +71,7 @@ void main() {
           }
         }
         final originalBytes =
-            Uint8List.fromList(img.encodeJpg(testImage, quality: 100));
+            Uint8List.fromList(img.encodeJpg(testImage));
 
         final result = await repository.compressImage(originalBytes);
 

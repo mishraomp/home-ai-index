@@ -75,7 +75,6 @@ void main() {
         locationId: testItem.locationId,
         quantity: testItem.quantity,
         imagePath: testItem.imagePath,
-        notes: null, // explicitly set to null
         addedAt: testItem.addedAt,
         updatedAt: testItem.updatedAt,
       );
@@ -135,7 +134,7 @@ void main() {
     });
 
     testWidgets('works without onTap callback', (WidgetTester tester) async {
-      await tester.pumpWidget(createTestWidget(item: testItem, onTap: null));
+      await tester.pumpWidget(createTestWidget(item: testItem));
 
       // Should render without error
       expect(find.byType(ItemCard), findsOneWidget);

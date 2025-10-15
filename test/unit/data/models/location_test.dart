@@ -9,7 +9,7 @@ void main() {
       parentId: 'kitchen',
     );
 
-    const rootLocation = Location(id: 'home', name: 'Home', parentId: null);
+    const rootLocation = Location(id: 'home', name: 'Home');
 
     group('fromJson', () {
       test('should correctly deserialize from JSON map', () {
@@ -131,9 +131,9 @@ void main() {
       });
 
       test('should handle equality with null parentId', () {
-        const location1 = Location(id: 'home', name: 'Home', parentId: null);
+        const location1 = Location(id: 'home', name: 'Home');
 
-        const location2 = Location(id: 'home', name: 'Home', parentId: null);
+        const location2 = Location(id: 'home', name: 'Home');
 
         expect(location1, equals(location2));
       });

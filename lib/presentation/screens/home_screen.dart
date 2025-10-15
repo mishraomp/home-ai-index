@@ -191,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final selectedLocationId = await showDialog<String?>(
       context: context,
       builder: (context) =>
-          LocationPickerDialog(locations: locations, selectedLocationId: null),
+          LocationPickerDialog(locations: locations),
     );
 
     if (selectedLocationId == null && !mounted) return;

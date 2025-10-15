@@ -30,7 +30,7 @@ void main() {
       quantity: 5,
       categoryId: 'cat-1',
       locationId: 'loc-1',
-      addedAt: DateTime(2025, 1, 1),
+      addedAt: DateTime(2025, 1),
       updatedAt: DateTime(2025, 1, 2),
     );
 
@@ -45,7 +45,7 @@ void main() {
         id: 'hist-2',
         itemId: 'item-1',
         locationId: 'loc-2',
-        timestamp: DateTime(2025, 1, 1),
+        timestamp: DateTime(2025, 1),
       ),
     ];
 
@@ -65,8 +65,8 @@ void main() {
     ];
 
     testLocations = [
-      const Location(id: 'loc-1', name: 'Kitchen Cabinet', parentId: null),
-      const Location(id: 'loc-2', name: 'Pantry', parentId: null),
+      const Location(id: 'loc-1', name: 'Kitchen Cabinet'),
+      const Location(id: 'loc-2', name: 'Pantry'),
     ];
 
     // Default mock setup
@@ -199,7 +199,7 @@ void main() {
 
       testWidgets('should display Unlocated when no location', (tester) async {
         when(mockViewModel.item).thenReturn(
-          testItem.copyWith(locationId: null, updateLocationId: true),
+          testItem.copyWith(updateLocationId: true),
         );
         when(mockViewModel.getLocationName(null)).thenReturn('Unlocated');
 

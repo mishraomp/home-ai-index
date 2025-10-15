@@ -226,7 +226,6 @@ void main() {
             notes: '',
             quantity: 1,
             categoryId: 'groceries',
-            locationId: null,
             addedAt: now,
             updatedAt: now,
           );
@@ -272,7 +271,6 @@ void main() {
 
           final result = await repository.getItems(
             locationId: 'pantry',
-            includeUnlocated: false,
           );
 
           expect(result, hasLength(1));
@@ -296,7 +294,6 @@ void main() {
             notes: '',
             quantity: 1,
             categoryId: 'groceries',
-            locationId: null,
             addedAt: now,
             updatedAt: now,
           );
@@ -306,7 +303,6 @@ void main() {
             notes: '',
             quantity: 1,
             categoryId: 'groceries',
-            locationId: null,
             addedAt: now,
             updatedAt: now,
           );
@@ -325,7 +321,6 @@ void main() {
           );
 
           final result = await repository.getItems(
-            locationId: null,
             includeUnlocated: true,
           );
 
@@ -338,7 +333,6 @@ void main() {
             mockDatabase.query(
               'items',
               where: 'location_id IS NULL',
-              whereArgs: null,
               orderBy: 'added_at DESC',
             ),
           ).called(1);

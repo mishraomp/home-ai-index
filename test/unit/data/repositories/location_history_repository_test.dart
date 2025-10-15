@@ -255,7 +255,6 @@ void main() {
         // Act
         final result = await repository.pruneHistoryForItem(
           'item1',
-          keepLast: 10,
         );
 
         // Assert
@@ -288,7 +287,6 @@ void main() {
         // Act
         final result = await repository.pruneHistoryForItem(
           'item1',
-          keepLast: 10,
         );
 
         // Assert

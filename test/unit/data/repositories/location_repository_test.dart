@@ -305,7 +305,7 @@ void main() {
     group('createLocation', () {
       test('should create root location successfully', () async {
         // Arrange
-        final location = Location(id: '1', name: 'Kitchen', parentId: null);
+        const location = Location(id: '1', name: 'Kitchen');
         when(
           mockDatabase.insert('locations', location.toDatabase()),
         ).thenAnswer((_) async => 1);
@@ -324,7 +324,7 @@ void main() {
 
       test('should create child location successfully', () async {
         // Arrange
-        final location = Location(id: '2', name: 'Pantry', parentId: '1');
+        const location = Location(id: '2', name: 'Pantry', parentId: '1');
 
         // Mock parent location exists
         when(
@@ -350,7 +350,7 @@ void main() {
 
       test('should throw ValidationException for empty name', () async {
         // Arrange
-        final location = Location(id: '1', name: '', parentId: null);
+        const location = Location(id: '1', name: '');
 
         // Act & Assert
         expect(
@@ -363,7 +363,7 @@ void main() {
         'should throw ValidationException when hierarchy too deep',
         () async {
           // Arrange - Trying to create 6th level
-          final location = Location(id: '6', name: 'Level 6', parentId: '5');
+          const location = Location(id: '6', name: 'Level 6', parentId: '5');
 
           // Mock 5 levels already exist
           when(
@@ -412,7 +412,7 @@ void main() {
 
       test('should throw DatabaseException on insert error', () async {
         // Arrange
-        final location = Location(id: '1', name: 'Kitchen', parentId: null);
+        const location = Location(id: '1', name: 'Kitchen');
         when(
           mockDatabase.insert('locations', location.toDatabase()),
         ).thenThrow(Exception('Database error'));
@@ -428,10 +428,9 @@ void main() {
     group('updateLocation', () {
       test('should update location successfully', () async {
         // Arrange
-        final location = Location(
+        const location = Location(
           id: '1',
           name: 'Updated Kitchen',
-          parentId: null,
         );
 
         // Mock location exists
@@ -469,10 +468,9 @@ void main() {
 
       test('should throw LocationNotFoundException when not found', () async {
         // Arrange
-        final location = Location(
+        const location = Location(
           id: 'nonexistent',
           name: 'Test',
-          parentId: null,
         );
         when(
           mockDatabase.query(
@@ -491,7 +489,7 @@ void main() {
 
       test('should throw ValidationException for empty name', () async {
         // Arrange
-        final location = Location(id: '1', name: '', parentId: null);
+        const location = Location(id: '1', name: '');
 
         // Act & Assert
         expect(
@@ -555,7 +553,7 @@ void main() {
         ).thenAnswer((_) async => 1);
 
         // Act
-        final result = await repository.deleteLocation('1', deleteItems: false);
+        final result = await repository.deleteLocation('1');
 
         // Assert
         expect(result, isTrue);

@@ -99,7 +99,7 @@ void main() {
 
     group('Full mode', () {
       testWidgets('renders as Chip in full mode', (WidgetTester tester) async {
-        await tester.pumpWidget(createTestWidget(isCompact: false));
+        await tester.pumpWidget(createTestWidget());
 
         expect(find.byType(Chip), findsOneWidget);
       });
@@ -107,7 +107,7 @@ void main() {
       testWidgets('has larger icon size in full mode', (
         WidgetTester tester,
       ) async {
-        await tester.pumpWidget(createTestWidget(isCompact: false));
+        await tester.pumpWidget(createTestWidget());
 
         final icon = tester.widget<Icon>(find.byIcon(Icons.restaurant));
         expect(icon.size, equals(18));
@@ -116,7 +116,7 @@ void main() {
       testWidgets('has larger text size in full mode', (
         WidgetTester tester,
       ) async {
-        await tester.pumpWidget(createTestWidget(isCompact: false));
+        await tester.pumpWidget(createTestWidget());
 
         final text = tester.widget<Text>(find.text('Food'));
         expect(text.style?.fontSize, equals(14));
@@ -125,7 +125,7 @@ void main() {
       testWidgets('uses Chip with avatar in full mode', (
         WidgetTester tester,
       ) async {
-        await tester.pumpWidget(createTestWidget(isCompact: false));
+        await tester.pumpWidget(createTestWidget());
 
         final chip = tester.widget<Chip>(find.byType(Chip));
         expect(chip.avatar, isA<Icon>());
@@ -157,10 +157,10 @@ void main() {
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: Column(
-              children: const [
+              children: [
                 CategoryBadge(
                   categoryName: 'Food',
                   icon: Icons.restaurant,
@@ -169,7 +169,6 @@ void main() {
                 CategoryBadge(
                   categoryName: 'Electronics',
                   icon: Icons.laptop,
-                  isCompact: false,
                 ),
               ],
             ),

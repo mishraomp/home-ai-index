@@ -61,13 +61,13 @@ void main() {
 
       test('should load categories on init', () async {
         final categories = [
-          Category(
+          const Category(
             id: '1',
             name: 'Groceries',
             iconCodePoint: 0xe532,
             isCustom: false,
           ),
-          Category(
+          const Category(
             id: '2',
             name: 'Electronics',
             iconCodePoint: 0xe30a,
@@ -129,7 +129,7 @@ void main() {
         ).thenAnswer((_) async => mockXFile);
         when(
           mockImageRepository.saveImage(any, any),
-        ).thenThrow(app_exceptions.ImageProcessingException('Failed to save'));
+        ).thenThrow(const app_exceptions.ImageProcessingException('Failed to save'));
 
         await viewModel.pickImage(ImageSource.camera);
 
@@ -152,7 +152,7 @@ void main() {
     group('recognizeImage', () {
       test('should recognize image from bytes', () async {
         final imageBytes = Uint8List.fromList([1, 2, 3]);
-        final recognitionResult = ImageRecognitionResult(
+        const recognitionResult = ImageRecognitionResult(
           label: 'banana',
           confidence: 0.92,
           suggestedCategory: 'groceries',
@@ -172,7 +172,7 @@ void main() {
 
       test('should handle low confidence predictions', () async {
         final imageBytes = Uint8List.fromList([1, 2, 3]);
-        final recognitionResult = ImageRecognitionResult(
+        const recognitionResult = ImageRecognitionResult(
           label: 'unknown_object',
           confidence: 0.35,
           suggestedCategory: 'other',
@@ -194,7 +194,7 @@ void main() {
 
         when(
           mockRecognitionService.classifyImage(any),
-        ).thenThrow(app_exceptions.ModelNotInitializedException());
+        ).thenThrow(const app_exceptions.ModelNotInitializedException());
 
         await viewModel.recognizeImage(imageBytes);
 
@@ -236,7 +236,7 @@ void main() {
       test('should handle save errors', () async {
         when(
           mockItemRepository.createItem(any),
-        ).thenThrow(app_exceptions.DatabaseException('Save failed'));
+        ).thenThrow(const app_exceptions.DatabaseException('Save failed'));
 
         final result = await viewModel.saveItem();
 

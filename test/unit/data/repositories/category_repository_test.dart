@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:home_ai_index/core/exceptions.dart' as app_exceptions;
 import 'package:home_ai_index/data/datasources/local/database_helper.dart';
 import 'package:home_ai_index/data/models/category.dart';
 import 'package:home_ai_index/data/repositories/category_repository_impl.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:sqflite/sqflite.dart';
 
 @GenerateMocks([DatabaseHelper, Database])
 import 'category_repository_test.mocks.dart';

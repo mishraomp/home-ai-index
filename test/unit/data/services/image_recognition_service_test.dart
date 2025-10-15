@@ -1,14 +1,12 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:home_ai_index/core/exceptions.dart' as app_exceptions;
+import 'package:home_ai_index/data/services/image_recognition_service_impl.dart';
 import 'package:image/image.dart' as img;
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
-
-import 'package:home_ai_index/core/exceptions.dart' as app_exceptions;
-import 'package:home_ai_index/data/models/image_recognition_result.dart';
-import 'package:home_ai_index/data/services/image_recognition_service_impl.dart';
 
 @GenerateMocks([Interpreter])
 import 'image_recognition_service_test.mocks.dart';

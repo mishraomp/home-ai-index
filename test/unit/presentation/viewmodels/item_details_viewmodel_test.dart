@@ -46,21 +46,20 @@ void main() {
         quantity: 1,
         imagePath: '/test/image.jpg',
         notes: 'Test notes',
-        addedAt: DateTime(2025, 1, 1),
-        updatedAt: DateTime(2025, 1, 1),
+        addedAt: DateTime(2025, 1),
+        updatedAt: DateTime(2025, 1),
       );
 
       testLocation = const Location(
         id: 'loc-1',
         name: 'Test Location',
-        parentId: null,
       );
 
       testHistory = LocationHistory(
         id: 'hist-1',
         itemId: 'item-1',
         locationId: 'loc-1',
-        timestamp: DateTime(2025, 1, 1),
+        timestamp: DateTime(2025, 1),
       );
 
       viewModel = ItemDetailsViewModel(
@@ -101,7 +100,7 @@ void main() {
       test('should handle item not found error', () async {
         when(
           mockItemRepository.getItemById('item-1'),
-        ).thenThrow(ItemNotFoundException('item-1'));
+        ).thenThrow(const ItemNotFoundException('item-1'));
 
         await viewModel.loadItem();
 
@@ -141,7 +140,7 @@ void main() {
           id: 'hist-old',
           itemId: 'item-1',
           locationId: 'loc-old',
-          timestamp: DateTime(2024, 12, 1),
+          timestamp: DateTime(2024, 12),
         );
         final historyList = [oldLocationHistory, testHistory];
         when(
