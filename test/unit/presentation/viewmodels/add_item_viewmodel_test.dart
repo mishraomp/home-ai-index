@@ -1,10 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-
 import 'package:home_ai_index/core/exceptions.dart' as app_exceptions;
 import 'package:home_ai_index/data/models/category.dart';
 import 'package:home_ai_index/data/models/image_recognition_result.dart';
@@ -14,6 +10,9 @@ import 'package:home_ai_index/data/repositories/image_repository.dart';
 import 'package:home_ai_index/data/repositories/item_repository.dart';
 import 'package:home_ai_index/data/services/image_recognition_service.dart';
 import 'package:home_ai_index/presentation/viewmodels/add_item_viewmodel.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
 @GenerateMocks([
   ItemRepository,

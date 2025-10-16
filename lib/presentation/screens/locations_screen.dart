@@ -184,9 +184,24 @@ class _LocationsScreenState extends State<LocationsScreen> {
           context,
         ).showSnackBar(SnackBar(content: Text(viewModel.errorMessage!)));
       } else if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Location deleted')));
+        // Show undo snackbar for 30 seconds
+        final snackBar = SnackBar(
+          content: const Text('Location deleted'),
+          duration: const Duration(seconds: 30),
+          action: SnackBarAction(
+            label: 'Undo',
+            onPressed: () async {
+              await viewModel.restoreLocation();
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Location restored')),
+                );
+              }
+            },
+          ),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     }
   }

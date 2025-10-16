@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 /// Widget to display an item's thumbnail image with fallback
 class ItemThumbnail extends StatelessWidget {
-
   const ItemThumbnail({
     super.key,
     this.imagePath,
@@ -30,6 +29,11 @@ class ItemThumbnail extends StatelessWidget {
             ? Image.file(
                 File(imagePath!),
                 fit: BoxFit.cover,
+                // Optimize memory usage by decoding at display size
+                cacheWidth: (size * MediaQuery.of(context).devicePixelRatio)
+                    .round(),
+                cacheHeight: (size * MediaQuery.of(context).devicePixelRatio)
+                    .round(),
                 errorBuilder: (context, error, stackTrace) {
                   return _buildFallback(context);
                 },

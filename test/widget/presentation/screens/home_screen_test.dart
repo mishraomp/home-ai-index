@@ -6,7 +6,7 @@ import 'package:home_ai_index/data/repositories/category_repository.dart';
 import 'package:home_ai_index/data/repositories/item_repository.dart';
 import 'package:home_ai_index/data/repositories/location_history_repository.dart';
 import 'package:home_ai_index/data/repositories/location_repository.dart';
-import 'package:home_ai_index/presentation/screens/home_screen.dart';
+import 'package:home_ai_index/presentation/screens/home/home_screen.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
@@ -80,8 +80,13 @@ void main() {
     ),
   ];
 
+  void setupMocks() {
+    when(mockItemRepository.getExpiringItems(any)).thenAnswer((_) async => []);
+  }
+
   group('HomeScreen Selection Mode', () {
     testWidgets('should show normal AppBar initially', (tester) async {
+      setupMocks();
       when(
         mockCategoryRepository.getCategories(),
       ).thenAnswer((_) async => [testCategory]);
@@ -99,11 +104,14 @@ void main() {
       expect(find.byIcon(Icons.close), findsNothing);
     });
 
-    testWidgets('should enter selection mode on long press', (tester) async {
+    testWidgets('should show normal AppBar initially', (tester) async {
       when(
         mockCategoryRepository.getCategories(),
       ).thenAnswer((_) async => [testCategory]);
       when(mockItemRepository.getItems()).thenAnswer((_) async => testItems);
+      when(
+        mockItemRepository.getExpiringItems(any),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createHomeScreen());
       await tester.pumpAndSettle();
@@ -134,6 +142,9 @@ void main() {
         mockCategoryRepository.getCategories(),
       ).thenAnswer((_) async => [testCategory]);
       when(mockItemRepository.getItems()).thenAnswer((_) async => testItems);
+      when(
+        mockItemRepository.getExpiringItems(any),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createHomeScreen());
       await tester.pumpAndSettle();
@@ -164,6 +175,9 @@ void main() {
         mockCategoryRepository.getCategories(),
       ).thenAnswer((_) async => [testCategory]);
       when(mockItemRepository.getItems()).thenAnswer((_) async => testItems);
+      when(
+        mockItemRepository.getExpiringItems(any),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createHomeScreen());
       await tester.pumpAndSettle();
@@ -192,6 +206,9 @@ void main() {
         mockCategoryRepository.getCategories(),
       ).thenAnswer((_) async => [testCategory]);
       when(mockItemRepository.getItems()).thenAnswer((_) async => testItems);
+      when(
+        mockItemRepository.getExpiringItems(any),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createHomeScreen());
       await tester.pumpAndSettle();
@@ -224,6 +241,9 @@ void main() {
         mockCategoryRepository.getCategories(),
       ).thenAnswer((_) async => [testCategory]);
       when(mockItemRepository.getItems()).thenAnswer((_) async => testItems);
+      when(
+        mockItemRepository.getExpiringItems(any),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createHomeScreen());
       await tester.pumpAndSettle();
@@ -253,6 +273,9 @@ void main() {
         mockCategoryRepository.getCategories(),
       ).thenAnswer((_) async => [testCategory]);
       when(mockItemRepository.getItems()).thenAnswer((_) async => testItems);
+      when(
+        mockItemRepository.getExpiringItems(any),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createHomeScreen());
       await tester.pumpAndSettle();
@@ -280,6 +303,9 @@ void main() {
         mockCategoryRepository.getCategories(),
       ).thenAnswer((_) async => [testCategory]);
       when(mockItemRepository.getItems()).thenAnswer((_) async => testItems);
+      when(
+        mockItemRepository.getExpiringItems(any),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createHomeScreen());
       await tester.pumpAndSettle();
@@ -303,6 +329,9 @@ void main() {
         mockCategoryRepository.getCategories(),
       ).thenAnswer((_) async => [testCategory]);
       when(mockItemRepository.getItems()).thenAnswer((_) async => testItems);
+      when(
+        mockItemRepository.getExpiringItems(any),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createHomeScreen());
       await tester.pumpAndSettle();
@@ -333,6 +362,9 @@ void main() {
           mockCategoryRepository.getCategories(),
         ).thenAnswer((_) async => [testCategory]);
         when(mockItemRepository.getItems()).thenAnswer((_) async => testItems);
+        when(
+          mockItemRepository.getExpiringItems(any),
+        ).thenAnswer((_) async => []);
 
         await tester.pumpWidget(createHomeScreen());
         await tester.pumpAndSettle();

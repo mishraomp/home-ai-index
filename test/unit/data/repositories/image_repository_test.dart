@@ -1,10 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:image/image.dart' as img;
-
 import 'package:home_ai_index/core/exceptions.dart' as app_exceptions;
 import 'package:home_ai_index/data/repositories/image_repository_impl.dart';
+import 'package:image/image.dart' as img;
 
 void main() {
   group('ImageRepository', () {

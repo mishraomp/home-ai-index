@@ -35,12 +35,14 @@ class ItemDetailsViewModel extends ChangeNotifier {
   Item? _item;
   List<LocationHistory> _locationHistory = [];
   final Map<String, Location> _locationCache = {};
+  Item? _deletedItem; // For undo functionality
 
   // Getters
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   Item? get item => _item;
   List<LocationHistory> get locationHistory => _locationHistory;
+  Item? get deletedItem => _deletedItem;
 
   /// Loads the item details
   Future<void> loadItem() async {
@@ -229,18 +231,62 @@ class ItemDetailsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Updates the item's expiration date
+  Future<void> updateItemExpirationDate(DateTime? expirationDate) async {
+    if (_item == null) return;
+
+    try {
+      final updatedItem = _item!.copyWith(
+        expirationDate: expirationDate,
+        updatedAt: DateTime.now(),
+      );
+      await _itemRepository.updateItem(updatedItem);
+      _item = updatedItem;
+      _errorMessage = null;
+    } catch (e) {
+      _errorMessage = 'Failed to update expiration date: $e';
+    }
+
+    notifyListeners();
+  }
+
   /// Deletes the item
   Future<bool> deleteItem() async {
     if (_item == null) return false;
 
     try {
+      // Store item for undo before deleting
+      _deletedItem = _item;
       await _itemRepository.deleteItem(_itemId);
       return true;
     } catch (e) {
       _errorMessage = 'Failed to delete item: $e';
+      _deletedItem = null; // Clear on error
       notifyListeners();
       return false;
     }
+  }
+
+  /// Restores a previously deleted item (undo operation)
+  Future<bool> restoreItem() async {
+    if (_deletedItem == null) return false;
+
+    try {
+      await _itemRepository.createItem(_deletedItem!);
+      _item = _deletedItem;
+      _deletedItem = null;
+      return true;
+    } catch (e) {
+      _errorMessage = 'Failed to restore item: $e';
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Clears the undo data after timeout
+  void clearUndoData() {
+    _deletedItem = null;
+    notifyListeners();
   }
 
   /// Gets the location name for a location ID (synchronous, uses cache)

@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:provider/provider.dart';
-
 import 'package:home_ai_index/data/models/category.dart';
 import 'package:home_ai_index/data/models/image_recognition_result.dart';
 import 'package:home_ai_index/presentation/screens/add_item_screen.dart';
 import 'package:home_ai_index/presentation/viewmodels/add_item_viewmodel.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:provider/provider.dart';
 
 @GenerateMocks([AddItemViewModel])
 import 'add_item_screen_test.mocks.dart';

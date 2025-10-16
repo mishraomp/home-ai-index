@@ -30,7 +30,7 @@ void main() {
       quantity: 5,
       categoryId: 'cat-1',
       locationId: 'loc-1',
-      addedAt: DateTime(2025, 1),
+      addedAt: DateTime(2025),
       updatedAt: DateTime(2025, 1, 2),
     );
 
@@ -45,7 +45,7 @@ void main() {
         id: 'hist-2',
         itemId: 'item-1',
         locationId: 'loc-2',
-        timestamp: DateTime(2025, 1),
+        timestamp: DateTime(2025),
       ),
     ];
 
@@ -89,7 +89,7 @@ void main() {
     return MaterialApp(
       home: ChangeNotifierProvider<ItemDetailsViewModel>.value(
         value: viewModel,
-        child: ItemDetailsScreen(categories: categories, locations: locations),
+        child: ItemDetailsContent(categories: categories, locations: locations),
       ),
     );
   }
@@ -198,9 +198,9 @@ void main() {
       });
 
       testWidgets('should display Unlocated when no location', (tester) async {
-        when(mockViewModel.item).thenReturn(
-          testItem.copyWith(updateLocationId: true),
-        );
+        when(
+          mockViewModel.item,
+        ).thenReturn(testItem.copyWith(updateLocationId: true));
         when(mockViewModel.getLocationName(null)).thenReturn('Unlocated');
 
         await tester.pumpWidget(

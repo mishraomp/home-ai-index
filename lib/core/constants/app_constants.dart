@@ -39,7 +39,7 @@ const int undoDeletionTimeoutSeconds = 30;
 const String databaseName = 'home_ai_index.db';
 
 /// Database version
-const int databaseVersion = 1;
+const int databaseVersion = 2;
 
 /// Image recognition confidence threshold (0.0-1.0)
 const double mlConfidenceThreshold = 0.5;

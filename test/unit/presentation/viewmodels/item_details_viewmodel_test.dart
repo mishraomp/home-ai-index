@@ -1,7 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-
 import 'package:home_ai_index/core/exceptions.dart';
 import 'package:home_ai_index/data/models/item.dart';
 import 'package:home_ai_index/data/models/location.dart';
@@ -11,6 +8,8 @@ import 'package:home_ai_index/data/repositories/item_repository.dart';
 import 'package:home_ai_index/data/repositories/location_history_repository.dart';
 import 'package:home_ai_index/data/repositories/location_repository.dart';
 import 'package:home_ai_index/presentation/viewmodels/item_details_viewmodel.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
 import 'item_details_viewmodel_test.mocks.dart';
 
@@ -46,20 +45,17 @@ void main() {
         quantity: 1,
         imagePath: '/test/image.jpg',
         notes: 'Test notes',
-        addedAt: DateTime(2025, 1),
-        updatedAt: DateTime(2025, 1),
+        addedAt: DateTime(2025),
+        updatedAt: DateTime(2025),
       );
 
-      testLocation = const Location(
-        id: 'loc-1',
-        name: 'Test Location',
-      );
+      testLocation = const Location(id: 'loc-1', name: 'Test Location');
 
       testHistory = LocationHistory(
         id: 'hist-1',
         itemId: 'item-1',
         locationId: 'loc-1',
-        timestamp: DateTime(2025, 1),
+        timestamp: DateTime(2025),
       );
 
       viewModel = ItemDetailsViewModel(
@@ -454,6 +450,86 @@ void main() {
 
         expect(result, isFalse);
         expect(viewModel.errorMessage, isNotNull);
+      });
+
+      test('should store deleted item for undo', () async {
+        when(
+          mockItemRepository.getItemById('item-1'),
+        ).thenAnswer((_) async => testItem);
+        await viewModel.loadItem();
+
+        when(mockItemRepository.deleteItem('item-1')).thenAnswer((_) async {});
+
+        await viewModel.deleteItem();
+
+        expect(viewModel.deletedItem, equals(testItem));
+      });
+    });
+
+    group('restoreItem', () {
+      test('should restore deleted item successfully', () async {
+        when(
+          mockItemRepository.getItemById('item-1'),
+        ).thenAnswer((_) async => testItem);
+        await viewModel.loadItem();
+
+        when(mockItemRepository.deleteItem('item-1')).thenAnswer((_) async {});
+        await viewModel.deleteItem();
+
+        when(
+          mockItemRepository.createItem(testItem),
+        ).thenAnswer((_) async => testItem.id);
+
+        final result = await viewModel.restoreItem();
+
+        expect(result, isTrue);
+        expect(viewModel.item, equals(testItem));
+        expect(viewModel.deletedItem, isNull);
+        verify(mockItemRepository.createItem(testItem)).called(1);
+      });
+
+      test('should return false if no deleted item', () async {
+        final result = await viewModel.restoreItem();
+
+        expect(result, isFalse);
+        verifyNever(mockItemRepository.createItem(any));
+      });
+
+      test('should handle restore error', () async {
+        when(
+          mockItemRepository.getItemById('item-1'),
+        ).thenAnswer((_) async => testItem);
+        await viewModel.loadItem();
+
+        when(mockItemRepository.deleteItem('item-1')).thenAnswer((_) async {});
+        await viewModel.deleteItem();
+
+        when(
+          mockItemRepository.createItem(testItem),
+        ).thenThrow(Exception('Restore failed'));
+
+        final result = await viewModel.restoreItem();
+
+        expect(result, isFalse);
+        expect(viewModel.errorMessage, isNotNull);
+      });
+    });
+
+    group('clearUndoData', () {
+      test('should clear deleted item', () async {
+        when(
+          mockItemRepository.getItemById('item-1'),
+        ).thenAnswer((_) async => testItem);
+        await viewModel.loadItem();
+
+        when(mockItemRepository.deleteItem('item-1')).thenAnswer((_) async {});
+        await viewModel.deleteItem();
+
+        expect(viewModel.deletedItem, isNotNull);
+
+        viewModel.clearUndoData();
+
+        expect(viewModel.deletedItem, isNull);
       });
     });
 

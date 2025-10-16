@@ -390,6 +390,111 @@ void main() {
         // Assert
         expect(viewModel.errorMessage, contains('Failed to delete location'));
       });
+
+      test('should store deleted location for undo', () async {
+        // Arrange
+        const testLocation = Location(id: '1', name: 'Test Location');
+        when(
+          mockLocationRepository.getLocations(),
+        ).thenAnswer((_) async => [testLocation]);
+        when(
+          mockLocationRepository.deleteLocation('1'),
+        ).thenAnswer((_) async => true);
+
+        await viewModel.loadLocations();
+
+        // Act
+        await viewModel.deleteLocation('1', deleteItems: false);
+
+        // Assert
+        expect(viewModel.deletedLocation, equals(testLocation));
+      });
+    });
+
+    group('restoreLocation', () {
+      test('should restore deleted location successfully', () async {
+        // Arrange
+        const testLocation = Location(id: '1', name: 'Test Location');
+        when(
+          mockLocationRepository.getLocations(),
+        ).thenAnswer((_) async => [testLocation]);
+        when(
+          mockLocationRepository.deleteLocation('1'),
+        ).thenAnswer((_) async => true);
+        await viewModel.loadLocations();
+        await viewModel.deleteLocation('1', deleteItems: false);
+
+        when(
+          mockLocationRepository.createLocation(testLocation),
+        ).thenAnswer((_) async => testLocation);
+        when(
+          mockLocationRepository.getLocations(),
+        ).thenAnswer((_) async => [testLocation]);
+
+        // Act
+        final result = await viewModel.restoreLocation();
+
+        // Assert
+        expect(result, isTrue);
+        expect(viewModel.deletedLocation, isNull);
+        verify(mockLocationRepository.createLocation(testLocation)).called(1);
+      });
+
+      test('should return false if no deleted location', () async {
+        // Act
+        final result = await viewModel.restoreLocation();
+
+        // Assert
+        expect(result, isFalse);
+        verifyNever(mockLocationRepository.createLocation(any));
+      });
+
+      test('should handle restore error', () async {
+        // Arrange
+        const testLocation = Location(id: '1', name: 'Test Location');
+        when(
+          mockLocationRepository.getLocations(),
+        ).thenAnswer((_) async => [testLocation]);
+        when(
+          mockLocationRepository.deleteLocation('1'),
+        ).thenAnswer((_) async => true);
+        await viewModel.loadLocations();
+        await viewModel.deleteLocation('1', deleteItems: false);
+
+        when(
+          mockLocationRepository.createLocation(testLocation),
+        ).thenThrow(const DatabaseException('Restore failed'));
+
+        // Act
+        final result = await viewModel.restoreLocation();
+
+        // Assert
+        expect(result, isFalse);
+        expect(viewModel.errorMessage, isNotNull);
+      });
+    });
+
+    group('clearUndoData', () {
+      test('should clear deleted location', () async {
+        // Arrange
+        const testLocation = Location(id: '1', name: 'Test Location');
+        when(
+          mockLocationRepository.getLocations(),
+        ).thenAnswer((_) async => [testLocation]);
+        when(
+          mockLocationRepository.deleteLocation('1'),
+        ).thenAnswer((_) async => true);
+        await viewModel.loadLocations();
+        await viewModel.deleteLocation('1', deleteItems: false);
+
+        expect(viewModel.deletedLocation, isNotNull);
+
+        // Act
+        viewModel.clearUndoData();
+
+        // Assert
+        expect(viewModel.deletedLocation, isNull);
+      });
     });
 
     group('getLocationPath', () {

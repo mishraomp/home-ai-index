@@ -32,6 +32,9 @@ dependencies:
   # State Management
   provider: ^6.1.0
   
+  # Navigation
+  go_router: ^14.0.0
+  
   # Local Database
   sqflite: ^2.3.0
   
@@ -70,11 +73,16 @@ dev_dependencies:
   
   # SQLite Testing
   sqflite_common_ffi: ^2.3.0
+  
+  # App Icon Generator
+  flutter_launcher_icons: ^0.13.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
+  sqflite_common: any
+  image_picker_platform_interface: any
 flutter:
   uses-material-design: true
 
@@ -83,6 +91,7 @@ flutter:
     - assets/ml_models/mobilenet_v2.tflite
     - assets/ml_models/imagenet_labels.txt
     - assets/images/empty_state/
+    - assets/icon/app-icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -109,3 +118,14 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# App Icon Configuration
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/app-icon.png"
+  # Optional: Use adaptive icons for Android (recommended)
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icon/app-icon.png"
+  # Optional: Remove old launcher icons
+  remove_alpha_ios: true

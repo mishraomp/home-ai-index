@@ -126,6 +126,20 @@ class MockItemDetailsViewModel extends _i1.Mock
           as _i4.Future<bool>);
 
   @override
+  _i4.Future<bool> restoreItem() =>
+      (super.noSuchMethod(
+            Invocation.method(#restoreItem, []),
+            returnValue: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
+
+  @override
+  void clearUndoData() => super.noSuchMethod(
+    Invocation.method(#clearUndoData, []),
+    returnValueForMissingStub: null,
+  );
+
+  @override
   String getLocationName(String? locationId) =>
       (super.noSuchMethod(
             Invocation.method(#getLocationName, [locationId]),

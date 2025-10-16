@@ -1,12 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart' hide DatabaseException;
-
 import 'package:home_ai_index/core/exceptions.dart';
 import 'package:home_ai_index/data/models/location.dart';
 import 'package:home_ai_index/data/repositories/location_repository.dart';
 import 'package:home_ai_index/data/repositories/location_repository_impl.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart' hide DatabaseException;
 
 @GenerateMocks([Database])
 import 'location_repository_test.mocks.dart';

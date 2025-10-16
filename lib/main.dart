@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:home_ai_index/core/navigation/app_router.dart';
 import 'package:home_ai_index/core/theme/app_theme.dart';
 import 'package:home_ai_index/data/datasources/local/database_helper.dart';
 import 'package:home_ai_index/data/repositories/category_repository.dart';
@@ -7,9 +8,12 @@ import 'package:home_ai_index/data/repositories/image_repository.dart';
 import 'package:home_ai_index/data/repositories/image_repository_impl.dart';
 import 'package:home_ai_index/data/repositories/item_repository.dart';
 import 'package:home_ai_index/data/repositories/item_repository_impl.dart';
+import 'package:home_ai_index/data/repositories/location_history_repository.dart';
+import 'package:home_ai_index/data/repositories/location_history_repository_impl.dart';
+import 'package:home_ai_index/data/repositories/location_repository.dart';
+import 'package:home_ai_index/data/repositories/location_repository_impl.dart';
 import 'package:home_ai_index/data/services/image_recognition_service.dart';
 import 'package:home_ai_index/data/services/image_recognition_service_impl.dart';
-import 'package:home_ai_index/presentation/screens/home_screen.dart';
 import 'package:home_ai_index/presentation/viewmodels/add_item_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -25,12 +29,16 @@ void main() async {
 
   // Initialize database
   final databaseHelper = DatabaseHelper.instance;
-  await databaseHelper.database; // Ensure database is created
+  final database = await databaseHelper.database; // Ensure database is created
 
   // Initialize repositories
   final itemRepository = ItemRepositoryImpl(databaseHelper);
   final categoryRepository = CategoryRepositoryImpl(databaseHelper);
   final imageRepository = ImageRepositoryImpl();
+  final locationRepository = LocationRepositoryImpl(database: database);
+  final locationHistoryRepository = LocationHistoryRepositoryImpl(
+    database: database,
+  );
 
   // Initialize ML service
   final recognitionService = await ImageRecognitionServiceImpl.create(
@@ -42,6 +50,8 @@ void main() async {
       itemRepository: itemRepository,
       categoryRepository: categoryRepository,
       imageRepository: imageRepository,
+      locationRepository: locationRepository,
+      locationHistoryRepository: locationHistoryRepository,
       recognitionService: recognitionService,
     ),
   );
@@ -51,17 +61,20 @@ void main() async {
 ///
 /// Sets up Provider for state management and MaterialApp with theme configuration.
 class HomeAIIndexApp extends StatelessWidget {
-
   const HomeAIIndexApp({
     super.key,
     required this.itemRepository,
     required this.categoryRepository,
     required this.imageRepository,
+    required this.locationRepository,
+    required this.locationHistoryRepository,
     required this.recognitionService,
   });
   final ItemRepositoryImpl itemRepository;
   final CategoryRepositoryImpl categoryRepository;
   final ImageRepositoryImpl imageRepository;
+  final LocationRepositoryImpl locationRepository;
+  final LocationHistoryRepositoryImpl locationHistoryRepository;
   final ImageRecognitionServiceImpl recognitionService;
 
   @override
@@ -72,6 +85,10 @@ class HomeAIIndexApp extends StatelessWidget {
         Provider<ItemRepository>.value(value: itemRepository),
         Provider<CategoryRepository>.value(value: categoryRepository),
         Provider<ImageRepository>.value(value: imageRepository),
+        Provider<LocationRepository>.value(value: locationRepository),
+        Provider<LocationHistoryRepository>.value(
+          value: locationHistoryRepository,
+        ),
         Provider<ImageRecognitionService>.value(value: recognitionService),
 
         // ViewModel providers
@@ -84,14 +101,16 @@ class HomeAIIndexApp extends StatelessWidget {
           ),
         ),
       ],
-      child: MaterialApp(
+      child: MaterialApp.router(
         title: 'Home AI Index',
         debugShowCheckedModeBanner: false,
 
         // Material Design 3 themes
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
-        home: const HomeScreen(),
+
+        // go_router configuration
+        routerConfig: AppRouter.createRouter(),
       ),
     );
   }

@@ -15,12 +15,14 @@ class LocationsViewModel extends ChangeNotifier {
   String? _errorMessage;
   List<Location> _locations = [];
   Location? _selectedLocation;
+  Location? _deletedLocation; // For undo functionality
 
   // Getters
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   List<Location> get locations => _locations;
   Location? get selectedLocation => _selectedLocation;
+  Location? get deletedLocation => _deletedLocation;
 
   /// Load all locations or root locations only
   Future<void> loadLocations({bool rootOnly = false}) async {
@@ -123,6 +125,13 @@ class LocationsViewModel extends ChangeNotifier {
       _setLoading(true);
       _errorMessage = null;
 
+      // Get the location before deleting for undo
+      final locationToDelete = _locations.firstWhere(
+        (loc) => loc.id == id,
+        orElse: () => Location(id: id, name: 'Unknown'),
+      );
+      _deletedLocation = locationToDelete;
+
       await _locationRepository.deleteLocation(id, deleteItems: deleteItems);
 
       // Reload locations after deletion
@@ -131,8 +140,31 @@ class LocationsViewModel extends ChangeNotifier {
       _setLoading(false);
     } catch (e) {
       _errorMessage = 'Failed to delete location: $e';
+      _deletedLocation = null;
       _setLoading(false);
     }
+  }
+
+  /// Restores a previously deleted location (undo operation)
+  Future<bool> restoreLocation() async {
+    if (_deletedLocation == null) return false;
+
+    try {
+      await _locationRepository.createLocation(_deletedLocation!);
+      _deletedLocation = null;
+      await loadLocations();
+      return true;
+    } catch (e) {
+      _errorMessage = 'Failed to restore location: $e';
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Clears the undo data after timeout
+  void clearUndoData() {
+    _deletedLocation = null;
+    notifyListeners();
   }
 
   /// Check if a location has items assigned to it

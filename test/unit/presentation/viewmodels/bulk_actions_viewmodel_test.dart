@@ -37,8 +37,8 @@ void main() {
         name: 'Item 1',
         categoryId: 'cat-1',
         quantity: 1,
-        addedAt: DateTime(2025, 1),
-        updatedAt: DateTime(2025, 1),
+        addedAt: DateTime(2025),
+        updatedAt: DateTime(2025),
         locationId: 'old-loc-1',
       ),
       Item(
@@ -46,8 +46,8 @@ void main() {
         name: 'Item 2',
         categoryId: 'cat-1',
         quantity: 1,
-        addedAt: DateTime(2025, 1),
-        updatedAt: DateTime(2025, 1),
+        addedAt: DateTime(2025),
+        updatedAt: DateTime(2025),
         locationId: 'old-loc-2',
       ),
       Item(
@@ -55,8 +55,8 @@ void main() {
         name: 'Item 3',
         categoryId: 'cat-1',
         quantity: 1,
-        addedAt: DateTime(2025, 1),
-        updatedAt: DateTime(2025, 1),
+        addedAt: DateTime(2025),
+        updatedAt: DateTime(2025),
       ),
     ];
 
@@ -291,8 +291,8 @@ void main() {
           name: 'Item 1',
           categoryId: 'cat-1',
           quantity: 1,
-          addedAt: DateTime(2025, 1),
-          updatedAt: DateTime(2025, 1),
+          addedAt: DateTime(2025),
+          updatedAt: DateTime(2025),
           locationId: 'new-loc',
         );
         when(

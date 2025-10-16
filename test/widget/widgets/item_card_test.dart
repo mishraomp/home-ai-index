@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:home_ai_index/data/models/item.dart';
+import 'package:home_ai_index/presentation/widgets/category/category_badge.dart';
 import 'package:home_ai_index/presentation/widgets/item/item_card.dart';
 import 'package:home_ai_index/presentation/widgets/item/item_thumbnail.dart';
-import 'package:home_ai_index/presentation/widgets/category/category_badge.dart';
 
 void main() {
   group('ItemCard Widget Tests', () {

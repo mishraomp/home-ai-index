@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:home_ai_index/core/constants/app_constants.dart';
 import 'package:home_ai_index/core/exceptions.dart';
 import 'package:home_ai_index/data/datasources/local/database_helper.dart';
@@ -13,8 +15,30 @@ class ItemRepositoryImpl implements ItemRepository {
   Future<String> createItem(Item item) async {
     try {
       final db = await _databaseHelper.database;
-      await db.insert('items', item.toDatabase());
-      return item.id;
+
+      // Generate a unique ID if not provided or empty
+      final itemId = item.id.isEmpty
+          ? 'item_${DateTime.now().millisecondsSinceEpoch}_${Random().nextInt(999999)}'
+          : item.id;
+
+      // Create new item with generated ID
+      final itemWithId = Item(
+        id: itemId,
+        name: item.name,
+        notes: item.notes,
+        quantity: item.quantity,
+        categoryId: item.categoryId,
+        locationId: item.locationId,
+        expirationDate: item.expirationDate,
+        imagePath: item.imagePath,
+        mlDetectedLabel: item.mlDetectedLabel,
+        mlConfidenceScore: item.mlConfidenceScore,
+        addedAt: item.addedAt,
+        updatedAt: item.updatedAt,
+      );
+
+      await db.insert('items', itemWithId.toDatabase());
+      return itemId;
     } catch (e) {
       throw DatabaseException('Failed to create item: $e');
     }

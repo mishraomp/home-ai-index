@@ -9,7 +9,6 @@ import 'package:sqflite/sqflite.dart';
 /// Manages database creation, migrations, and provides the database instance.
 /// Implements the singleton pattern to ensure a single database connection.
 class DatabaseHelper {
-
   DatabaseHelper._internal();
   static final DatabaseHelper instance = DatabaseHelper._internal();
   static Database? _database;
@@ -45,12 +44,15 @@ class DatabaseHelper {
   Future<void> _onCreate(Database db, int version) async {
     await _createTables(db);
     await _seedDefaultCategories(db);
+    await _seedDefaultLocations(db);
   }
 
   /// Handles database migrations
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // Future migrations will be handled here
-    // For now, this is a placeholder for when we need to update the schema
+    // Version 1 -> 2: Add default location seed data
+    if (oldVersion < 2) {
+      await _seedDefaultLocations(db);
+    }
   }
 
   /// Creates all database tables
@@ -148,6 +150,31 @@ class DatabaseHelper {
       dbCategory.remove('iconCodePoint');
 
       await db.insert('categories', dbCategory);
+    }
+  }
+
+  /// Seeds the database with default locations
+  Future<void> _seedDefaultLocations(Database db) async {
+    // Define some common default locations for a home
+    final defaultLocations = [
+      {'id': 'home', 'name': 'Home', 'parent_id': null},
+      {'id': 'kitchen', 'name': 'Kitchen', 'parent_id': 'home'},
+      {'id': 'bedroom', 'name': 'Bedroom', 'parent_id': 'home'},
+      {'id': 'living-room', 'name': 'Living Room', 'parent_id': 'home'},
+      {'id': 'bathroom', 'name': 'Bathroom', 'parent_id': 'home'},
+      {'id': 'garage', 'name': 'Garage', 'parent_id': 'home'},
+      {'id': 'storage', 'name': 'Storage', 'parent_id': 'home'},
+      // Kitchen sub-locations
+      {'id': 'pantry', 'name': 'Pantry', 'parent_id': 'kitchen'},
+      {'id': 'fridge', 'name': 'Refrigerator', 'parent_id': 'kitchen'},
+      {'id': 'cabinet', 'name': 'Cabinet', 'parent_id': 'kitchen'},
+      // Bedroom sub-locations
+      {'id': 'closet', 'name': 'Closet', 'parent_id': 'bedroom'},
+      {'id': 'dresser', 'name': 'Dresser', 'parent_id': 'bedroom'},
+    ];
+
+    for (final location in defaultLocations) {
+      await db.insert('locations', location);
     }
   }
 
