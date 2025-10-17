@@ -3,16 +3,19 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i5;
-import 'dart:typed_data' as _i7;
-import 'dart:ui' as _i8;
+import 'dart:async' as _i6;
+import 'dart:typed_data' as _i8;
+import 'dart:ui' as _i9;
 
-import 'package:home_ai_index/data/models/category.dart' as _i3;
+import 'package:home_ai_index/data/models/category.dart' as _i4;
+import 'package:home_ai_index/data/models/location.dart' as _i2;
+import 'package:home_ai_index/data/repositories/location_repository.dart'
+    as _i10;
 import 'package:home_ai_index/presentation/viewmodels/add_item_viewmodel.dart'
-    as _i2;
-import 'package:image_picker/image_picker.dart' as _i6;
+    as _i3;
+import 'package:image_picker/image_picker.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i4;
+import 'package:mockito/src/dummies.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -29,10 +32,15 @@ import 'package:mockito/src/dummies.dart' as _i4;
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
+class _FakeLocation_0 extends _i1.SmartFake implements _i2.Location {
+  _FakeLocation_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [AddItemViewModel].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAddItemViewModel extends _i1.Mock implements _i2.AddItemViewModel {
+class MockAddItemViewModel extends _i1.Mock implements _i3.AddItemViewModel {
   MockAddItemViewModel() {
     _i1.throwOnMissingStub(this);
   }
@@ -43,18 +51,42 @@ class MockAddItemViewModel extends _i1.Mock implements _i2.AddItemViewModel {
           as bool);
 
   @override
-  List<_i3.Category> get categories =>
+  List<_i4.Category> get categories =>
       (super.noSuchMethod(
             Invocation.getter(#categories),
-            returnValue: <_i3.Category>[],
+            returnValue: <_i4.Category>[],
           )
-          as List<_i3.Category>);
+          as List<_i4.Category>);
+
+  @override
+  _i3.RecognitionState get recognitionState =>
+      (super.noSuchMethod(
+            Invocation.getter(#recognitionState),
+            returnValue: _i3.RecognitionState.idle,
+          )
+          as _i3.RecognitionState);
+
+  @override
+  bool get hasApiCredentials =>
+      (super.noSuchMethod(
+            Invocation.getter(#hasApiCredentials),
+            returnValue: false,
+          )
+          as bool);
+
+  @override
+  bool get usedOnlineRecognition =>
+      (super.noSuchMethod(
+            Invocation.getter(#usedOnlineRecognition),
+            returnValue: false,
+          )
+          as bool);
 
   @override
   String get name =>
       (super.noSuchMethod(
             Invocation.getter(#name),
-            returnValue: _i4.dummyValue<String>(this, Invocation.getter(#name)),
+            returnValue: _i5.dummyValue<String>(this, Invocation.getter(#name)),
           )
           as String);
 
@@ -66,7 +98,7 @@ class MockAddItemViewModel extends _i1.Mock implements _i2.AddItemViewModel {
   String get notes =>
       (super.noSuchMethod(
             Invocation.getter(#notes),
-            returnValue: _i4.dummyValue<String>(
+            returnValue: _i5.dummyValue<String>(
               this,
               Invocation.getter(#notes),
             ),
@@ -77,9 +109,36 @@ class MockAddItemViewModel extends _i1.Mock implements _i2.AddItemViewModel {
   String get suggestedName =>
       (super.noSuchMethod(
             Invocation.getter(#suggestedName),
-            returnValue: _i4.dummyValue<String>(
+            returnValue: _i5.dummyValue<String>(
               this,
               Invocation.getter(#suggestedName),
+            ),
+          )
+          as String);
+
+  @override
+  List<String> get alternativeLabels =>
+      (super.noSuchMethod(
+            Invocation.getter(#alternativeLabels),
+            returnValue: <String>[],
+          )
+          as List<String>);
+
+  @override
+  bool get isLowConfidence =>
+      (super.noSuchMethod(
+            Invocation.getter(#isLowConfidence),
+            returnValue: false,
+          )
+          as bool);
+
+  @override
+  String get recognitionSource =>
+      (super.noSuchMethod(
+            Invocation.getter(#recognitionSource),
+            returnValue: _i5.dummyValue<String>(
+              this,
+              Invocation.getter(#recognitionSource),
             ),
           )
           as String);
@@ -90,39 +149,72 @@ class MockAddItemViewModel extends _i1.Mock implements _i2.AddItemViewModel {
           as bool);
 
   @override
-  _i5.Future<void> loadCategories() =>
+  _i6.Future<void> loadCategories() =>
       (super.noSuchMethod(
             Invocation.method(#loadCategories, []),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i6.Future<void>);
 
   @override
-  _i5.Future<void> pickImage(_i6.ImageSource? source) =>
+  _i6.Future<void> pickImage(_i7.ImageSource? source) =>
       (super.noSuchMethod(
             Invocation.method(#pickImage, [source]),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i6.Future<void>);
 
   @override
-  _i5.Future<void> recognizeImage(_i7.Uint8List? imageBytes) =>
+  _i6.Future<void> recognizeImage(_i8.Uint8List? imageBytes) =>
       (super.noSuchMethod(
             Invocation.method(#recognizeImage, [imageBytes]),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i6.Future<void>);
 
   @override
-  _i5.Future<bool> saveItem() =>
+  _i6.Future<void> retryRecognition() =>
+      (super.noSuchMethod(
+            Invocation.method(#retryRecognition, []),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> confirmQuotaAndRecognize() =>
+      (super.noSuchMethod(
+            Invocation.method(#confirmQuotaAndRecognize, []),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
+
+  @override
+  void cancelQuotaWarning() => super.noSuchMethod(
+    Invocation.method(#cancelQuotaWarning, []),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  _i6.Future<void> refreshCredentialsStatus() =>
+      (super.noSuchMethod(
+            Invocation.method(#refreshCredentialsStatus, []),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
+
+  @override
+  _i6.Future<bool> saveItem() =>
       (super.noSuchMethod(
             Invocation.method(#saveItem, []),
-            returnValue: _i5.Future<bool>.value(false),
+            returnValue: _i6.Future<bool>.value(false),
           )
-          as _i5.Future<bool>);
+          as _i6.Future<bool>);
 
   @override
   void setName(String? value) => super.noSuchMethod(
@@ -179,13 +271,13 @@ class MockAddItemViewModel extends _i1.Mock implements _i2.AddItemViewModel {
   );
 
   @override
-  void addListener(_i8.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i9.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#addListener, [listener]),
     returnValueForMissingStub: null,
   );
 
   @override
-  void removeListener(_i8.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i9.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#removeListener, [listener]),
     returnValueForMissingStub: null,
   );
@@ -195,4 +287,105 @@ class MockAddItemViewModel extends _i1.Mock implements _i2.AddItemViewModel {
     Invocation.method(#notifyListeners, []),
     returnValueForMissingStub: null,
   );
+}
+
+/// A class which mocks [LocationRepository].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockLocationRepository extends _i1.Mock
+    implements _i10.LocationRepository {
+  MockLocationRepository() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i6.Future<List<_i2.Location>> getLocations({bool? rootOnly = false}) =>
+      (super.noSuchMethod(
+            Invocation.method(#getLocations, [], {#rootOnly: rootOnly}),
+            returnValue: _i6.Future<List<_i2.Location>>.value(<_i2.Location>[]),
+          )
+          as _i6.Future<List<_i2.Location>>);
+
+  @override
+  _i6.Future<_i2.Location> getLocationById(String? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#getLocationById, [id]),
+            returnValue: _i6.Future<_i2.Location>.value(
+              _FakeLocation_0(this, Invocation.method(#getLocationById, [id])),
+            ),
+          )
+          as _i6.Future<_i2.Location>);
+
+  @override
+  _i6.Future<List<_i2.Location>> getChildLocations(String? parentId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getChildLocations, [parentId]),
+            returnValue: _i6.Future<List<_i2.Location>>.value(<_i2.Location>[]),
+          )
+          as _i6.Future<List<_i2.Location>>);
+
+  @override
+  _i6.Future<List<_i2.Location>> getLocationPath(String? locationId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getLocationPath, [locationId]),
+            returnValue: _i6.Future<List<_i2.Location>>.value(<_i2.Location>[]),
+          )
+          as _i6.Future<List<_i2.Location>>);
+
+  @override
+  _i6.Future<_i2.Location> createLocation(_i2.Location? location) =>
+      (super.noSuchMethod(
+            Invocation.method(#createLocation, [location]),
+            returnValue: _i6.Future<_i2.Location>.value(
+              _FakeLocation_0(
+                this,
+                Invocation.method(#createLocation, [location]),
+              ),
+            ),
+          )
+          as _i6.Future<_i2.Location>);
+
+  @override
+  _i6.Future<_i2.Location> updateLocation(_i2.Location? location) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateLocation, [location]),
+            returnValue: _i6.Future<_i2.Location>.value(
+              _FakeLocation_0(
+                this,
+                Invocation.method(#updateLocation, [location]),
+              ),
+            ),
+          )
+          as _i6.Future<_i2.Location>);
+
+  @override
+  _i6.Future<bool> deleteLocation(String? id, {bool? deleteItems = false}) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #deleteLocation,
+              [id],
+              {#deleteItems: deleteItems},
+            ),
+            returnValue: _i6.Future<bool>.value(false),
+          )
+          as _i6.Future<bool>);
+
+  @override
+  _i6.Future<bool> hasItems(String? locationId) =>
+      (super.noSuchMethod(
+            Invocation.method(#hasItems, [locationId]),
+            returnValue: _i6.Future<bool>.value(false),
+          )
+          as _i6.Future<bool>);
+
+  @override
+  _i6.Future<bool> validateLocationMove(
+    String? locationId,
+    String? newParentId,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#validateLocationMove, [locationId, newParentId]),
+            returnValue: _i6.Future<bool>.value(false),
+          )
+          as _i6.Future<bool>);
 }

@@ -6,16 +6,16 @@
 import 'dart:async' as _i5;
 import 'dart:typed_data' as _i11;
 
+import 'package:home_ai_index/data/models/api_credentials.dart' as _i13;
 import 'package:home_ai_index/data/models/category.dart' as _i9;
-import 'package:home_ai_index/data/models/image_recognition_result.dart' as _i2;
 import 'package:home_ai_index/data/models/item.dart' as _i6;
+import 'package:home_ai_index/data/models/recognition_result.dart' as _i2;
 import 'package:home_ai_index/data/repositories/category_repository.dart'
     as _i8;
 import 'package:home_ai_index/data/repositories/image_repository.dart' as _i10;
 import 'package:home_ai_index/data/repositories/item_repository.dart' as _i4;
-import 'package:home_ai_index/data/services/image_recognition_service.dart'
-    as _i12;
-import 'package:image_picker/image_picker.dart' as _i13;
+import 'package:home_ai_index/data/services/recognition_service.dart' as _i12;
+import 'package:image_picker/image_picker.dart' as _i14;
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart'
     as _i3;
 import 'package:mockito/mockito.dart' as _i1;
@@ -36,9 +36,9 @@ import 'package:mockito/src/dummies.dart' as _i7;
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-class _FakeImageRecognitionResult_0 extends _i1.SmartFake
-    implements _i2.ImageRecognitionResult {
-  _FakeImageRecognitionResult_0(Object parent, Invocation parentInvocation)
+class _FakeRecognitionResult_0 extends _i1.SmartFake
+    implements _i2.RecognitionResult {
+  _FakeRecognitionResult_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
@@ -269,40 +269,49 @@ class MockImageRepository extends _i1.Mock implements _i10.ImageRepository {
           as _i5.Future<bool>);
 }
 
-/// A class which mocks [ImageRecognitionService].
+/// A class which mocks [RecognitionService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockImageRecognitionService extends _i1.Mock
-    implements _i12.ImageRecognitionService {
-  MockImageRecognitionService() {
+class MockRecognitionService extends _i1.Mock
+    implements _i12.RecognitionService {
+  MockRecognitionService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i5.Future<_i2.ImageRecognitionResult> classifyImage(
+  _i5.Future<_i2.RecognitionResult> recognizeImage(
     _i11.Uint8List? imageBytes,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#classifyImage, [imageBytes]),
-            returnValue: _i5.Future<_i2.ImageRecognitionResult>.value(
-              _FakeImageRecognitionResult_0(
+            Invocation.method(#recognizeImage, [imageBytes]),
+            returnValue: _i5.Future<_i2.RecognitionResult>.value(
+              _FakeRecognitionResult_0(
                 this,
-                Invocation.method(#classifyImage, [imageBytes]),
+                Invocation.method(#recognizeImage, [imageBytes]),
               ),
             ),
           )
-          as _i5.Future<_i2.ImageRecognitionResult>);
+          as _i5.Future<_i2.RecognitionResult>);
 
   @override
-  String mapLabelToCategory(String? label) =>
+  void setCredentials(_i13.APICredentials? credentials) => super.noSuchMethod(
+    Invocation.method(#setCredentials, [credentials]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void setOfflineMode(bool? enabled) => super.noSuchMethod(
+    Invocation.method(#setOfflineMode, [enabled]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  bool isOfflineMode() =>
       (super.noSuchMethod(
-            Invocation.method(#mapLabelToCategory, [label]),
-            returnValue: _i7.dummyValue<String>(
-              this,
-              Invocation.method(#mapLabelToCategory, [label]),
-            ),
+            Invocation.method(#isOfflineMode, []),
+            returnValue: false,
           )
-          as String);
+          as bool);
 
   @override
   void dispose() => super.noSuchMethod(
@@ -314,7 +323,7 @@ class MockImageRecognitionService extends _i1.Mock
 /// A class which mocks [ImagePicker].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockImagePicker extends _i1.Mock implements _i13.ImagePicker {
+class MockImagePicker extends _i1.Mock implements _i14.ImagePicker {
   MockImagePicker() {
     _i1.throwOnMissingStub(this);
   }

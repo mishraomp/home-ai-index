@@ -1,42 +1,59 @@
-import 'dart:typed_data';
-
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:home_ai_index/core/exceptions.dart' as app_exceptions;
 import 'package:home_ai_index/data/models/category.dart';
-import 'package:home_ai_index/data/models/image_recognition_result.dart';
 import 'package:home_ai_index/data/models/item.dart';
+import 'package:home_ai_index/data/models/recognition_result.dart';
 import 'package:home_ai_index/data/repositories/category_repository.dart';
 import 'package:home_ai_index/data/repositories/image_repository.dart';
 import 'package:home_ai_index/data/repositories/item_repository.dart';
-import 'package:home_ai_index/data/services/image_recognition_service.dart';
+import 'package:home_ai_index/data/services/recognition_service.dart';
 import 'package:home_ai_index/presentation/viewmodels/add_item_viewmodel.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 @GenerateMocks([
   ItemRepository,
   CategoryRepository,
   ImageRepository,
-  ImageRecognitionService,
+  RecognitionService,
   ImagePicker,
 ])
 import 'add_item_viewmodel_test.mocks.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() {
+    // Mock SharedPreferences for all tests
+    SharedPreferences.setMockInitialValues({});
+
+    // Mock FlutterSecureStorage
+    const MethodChannel(
+      'plugins.it_nomads.com/flutter_secure_storage',
+    ).setMockMethodCallHandler((MethodCall methodCall) async {
+      if (methodCall.method == 'read') {
+        return null; // Return null for all read operations (no credentials stored)
+      }
+      return null;
+    });
+  });
+
   group('AddItemViewModel', () {
     late AddItemViewModel viewModel;
     late MockItemRepository mockItemRepository;
     late MockCategoryRepository mockCategoryRepository;
     late MockImageRepository mockImageRepository;
-    late MockImageRecognitionService mockRecognitionService;
+    late MockRecognitionService mockRecognitionService;
     late MockImagePicker mockImagePicker;
 
     setUp(() {
       mockItemRepository = MockItemRepository();
       mockCategoryRepository = MockCategoryRepository();
       mockImageRepository = MockImageRepository();
-      mockRecognitionService = MockImageRecognitionService();
+      mockRecognitionService = MockRecognitionService();
       mockImagePicker = MockImagePicker();
 
       viewModel = AddItemViewModel(
@@ -117,7 +134,7 @@ void main() {
         expect(viewModel.recognitionResult, isNull);
         expect(viewModel.errorMessage, isNull);
         verifyNever(mockImageRepository.saveImage(any, any));
-        verifyNever(mockRecognitionService.classifyImage(any));
+        verifyNever(mockRecognitionService.recognizeImage(any));
       });
 
       test('should set error message on image processing failure', () async {
@@ -126,9 +143,9 @@ void main() {
         when(
           mockImagePicker.pickImage(source: ImageSource.camera),
         ).thenAnswer((_) async => mockXFile);
-        when(
-          mockImageRepository.saveImage(any, any),
-        ).thenThrow(const app_exceptions.ImageProcessingException('Failed to save'));
+        when(mockImageRepository.saveImage(any, any)).thenThrow(
+          const app_exceptions.ImageProcessingException('Failed to save'),
+        );
 
         await viewModel.pickImage(ImageSource.camera);
 
@@ -151,14 +168,15 @@ void main() {
     group('recognizeImage', () {
       test('should recognize image from bytes', () async {
         final imageBytes = Uint8List.fromList([1, 2, 3]);
-        const recognitionResult = ImageRecognitionResult(
+        const recognitionResult = RecognitionResult(
           label: 'banana',
           confidence: 0.92,
-          suggestedCategory: 'groceries',
+          category: 'groceries',
+          source: RecognitionSource.cloudVision,
         );
 
         when(
-          mockRecognitionService.classifyImage(any),
+          mockRecognitionService.recognizeImage(any),
         ).thenAnswer((_) async => recognitionResult);
 
         await viewModel.recognizeImage(imageBytes);
@@ -166,19 +184,20 @@ void main() {
         expect(viewModel.recognitionResult, recognitionResult);
         expect(viewModel.suggestedName, 'banana');
         expect(viewModel.suggestedCategory, 'groceries');
-        verify(mockRecognitionService.classifyImage(imageBytes)).called(1);
+        verify(mockRecognitionService.recognizeImage(imageBytes)).called(1);
       });
 
       test('should handle low confidence predictions', () async {
         final imageBytes = Uint8List.fromList([1, 2, 3]);
-        const recognitionResult = ImageRecognitionResult(
+        const recognitionResult = RecognitionResult(
           label: 'unknown_object',
           confidence: 0.35,
-          suggestedCategory: 'other',
+          category: 'other',
+          source: RecognitionSource.offline,
         );
 
         when(
-          mockRecognitionService.classifyImage(any),
+          mockRecognitionService.recognizeImage(any),
         ).thenAnswer((_) async => recognitionResult);
 
         await viewModel.recognizeImage(imageBytes);
@@ -192,13 +211,77 @@ void main() {
         final imageBytes = Uint8List.fromList([1, 2, 3]);
 
         when(
-          mockRecognitionService.classifyImage(any),
+          mockRecognitionService.recognizeImage(any),
         ).thenThrow(const app_exceptions.ModelNotInitializedException());
 
         await viewModel.recognizeImage(imageBytes);
 
         expect(viewModel.errorMessage, isNotNull);
         expect(viewModel.recognitionResult, isNull);
+      });
+
+      test('should handle NetworkException and set error state', () async {
+        final imageBytes = Uint8List.fromList([1, 2, 3]);
+
+        when(
+          mockRecognitionService.recognizeImage(any),
+        ).thenThrow(const app_exceptions.NetworkException('No connection'));
+
+        await viewModel.recognizeImage(imageBytes);
+
+        expect(viewModel.recognitionState, RecognitionState.error);
+        expect(viewModel.errorMessage, contains('Network error'));
+        expect(viewModel.usedOnlineRecognition, false);
+      });
+
+      test(
+        'should handle AuthenticationException and set error state',
+        () async {
+          final imageBytes = Uint8List.fromList([1, 2, 3]);
+
+          when(mockRecognitionService.recognizeImage(any)).thenThrow(
+            const app_exceptions.AuthenticationException('Invalid API key'),
+          );
+
+          await viewModel.recognizeImage(imageBytes);
+
+          expect(viewModel.recognitionState, RecognitionState.error);
+          expect(viewModel.errorMessage, contains('Authentication failed'));
+          expect(viewModel.errorMessage, contains('API key'));
+          expect(viewModel.usedOnlineRecognition, false);
+        },
+      );
+
+      test(
+        'should handle QuotaExceededException and set error state',
+        () async {
+          final imageBytes = Uint8List.fromList([1, 2, 3]);
+
+          when(mockRecognitionService.recognizeImage(any)).thenThrow(
+            const app_exceptions.QuotaExceededException('Quota exceeded'),
+          );
+
+          await viewModel.recognizeImage(imageBytes);
+
+          expect(viewModel.recognitionState, RecognitionState.error);
+          expect(viewModel.errorMessage, contains('API quota exceeded'));
+          expect(viewModel.usedOnlineRecognition, false);
+        },
+      );
+
+      test('should handle TimeoutException and set error state', () async {
+        final imageBytes = Uint8List.fromList([1, 2, 3]);
+
+        when(
+          mockRecognitionService.recognizeImage(any),
+        ).thenThrow(const app_exceptions.TimeoutException('Request timeout'));
+
+        // Note: TimeoutException handling is currently lumped with generic errors
+        await viewModel.recognizeImage(imageBytes);
+
+        expect(viewModel.recognitionState, RecognitionState.error);
+        expect(viewModel.errorMessage, isNotNull);
+        expect(viewModel.usedOnlineRecognition, false);
       });
     });
 

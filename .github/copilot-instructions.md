@@ -1,9 +1,11 @@
 ﻿# home-ai-index Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2025-10-13
+Auto-generated from all feature plans. Last updated: 2025-10-16
 
 ## Active Technologies
 - Dart 3.2+ / Flutter 3.16+ (001-build-a-mobile)
+- Google Cloud Vision API, http ^1.1.0, flutter_secure_storage ^9.0.0, connectivity_plus ^5.0.0 (002-upgrade-the-existing)
+- Provider state management, image ^4.0.17, sqflite ^2.3.0 (existing)
 
 ## Project Structure
 ```
@@ -12,7 +14,21 @@ tests/
 ```
 
 ## Commands
-# Add commands for Dart 3.2+ / Flutter 3.16+
+```bash
+# Development
+flutter run              # Run app in debug mode
+flutter test             # Run unit/widget tests
+flutter analyze          # Check for issues
+dart fix --apply         # Auto-fix lint issues
+
+# Cloud Vision API
+flutter pub get          # Install dependencies
+# See quickstart.md for API setup
+
+# Build
+flutter build apk        # Build Android APK
+flutter build ios        # Build iOS app
+```
 
 ## Code Style
 Dart 3.2+ / Flutter 3.16+: Follow standard conventions
@@ -44,6 +60,7 @@ Dart 3.2+ / Flutter 3.16+: Follow standard conventions
    - Follow Material Design 3 guidelines for UI components
 
 ## Recent Changes
+- 002-upgrade-the-existing: Added Google Cloud Vision API integration (http, flutter_secure_storage, connectivity_plus)
 - 001-build-a-mobile: Added Dart 3.2+ / Flutter 3.16+
 
 <!-- MANUAL ADDITIONS START -->

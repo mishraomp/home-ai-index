@@ -135,6 +135,10 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: const Icon(Icons.search),
           onPressed: _navigateToSearch,
         ),
+        IconButton(
+          icon: const Icon(Icons.settings),
+          onPressed: _navigateToSettings,
+        ),
       ],
     );
   }
@@ -427,6 +431,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void _navigateToSettings() {
+    context.push('/settings');
   }
 
   Future<void> _navigateToItemDetails(String itemId) async {

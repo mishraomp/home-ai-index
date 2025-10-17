@@ -45,5 +45,6 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- Google Cloud Vision API uses HTTPS, no ATS configuration needed -->
 </dict>
 </plist>
