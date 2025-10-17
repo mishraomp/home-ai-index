@@ -6,6 +6,7 @@ import 'package:home_ai_index/data/models/location.dart';
 import 'package:home_ai_index/presentation/viewmodels/add_item_viewmodel.dart';
 import 'package:home_ai_index/presentation/viewmodels/locations_viewmodel.dart';
 import 'package:home_ai_index/presentation/widgets/location/location_picker.dart';
+import 'package:home_ai_index/presentation/widgets/quota_warning_dialog.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -45,11 +46,43 @@ class _AddItemScreenState extends State<AddItemScreen> {
       appBar: AppBar(
         title: const Text('Add Item'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: 'API Settings',
+            onPressed: () {
+              final viewModel = context.read<AddItemViewModel>();
+              Navigator.pushNamed(context, '/settings').then((_) {
+                // Refresh credentials status after returning
+                viewModel.refreshCredentialsStatus();
+              });
+            },
+          ),
           IconButton(icon: const Icon(Icons.check), onPressed: _saveItem),
         ],
       ),
       body: Consumer<AddItemViewModel>(
         builder: (context, viewModel, child) {
+          // Show quota warning dialog if pending
+          if (viewModel.pendingQuotaWarning != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) async {
+              final warning = viewModel.pendingQuotaWarning;
+              if (warning != null) {
+                final shouldProceed = await QuotaWarningDialog.show(
+                  context,
+                  warning,
+                );
+
+                if (mounted) {
+                  if (shouldProceed) {
+                    viewModel.confirmQuotaAndRecognize();
+                  } else {
+                    viewModel.cancelQuotaWarning();
+                  }
+                }
+              }
+            });
+          }
+
           if (viewModel.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -75,17 +108,6 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   const SizedBox(height: 16),
                   _buildNotesField(viewModel),
                   const SizedBox(height: 24),
-                  if (viewModel.errorMessage != null)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: Text(
-                        viewModel.errorMessage!,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
                   _buildSaveButton(viewModel),
                 ],
               ),
@@ -148,49 +170,259 @@ class _AddItemScreenState extends State<AddItemScreen> {
   }
 
   Widget _buildRecognitionResult(AddItemViewModel viewModel) {
-    final result = viewModel.recognitionResult;
-    if (result == null) return const SizedBox.shrink();
-
-    return Card(
-      color: Theme.of(context).colorScheme.primaryContainer,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.auto_awesome,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'AI Recognition',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    fontWeight: FontWeight.bold,
+    return Column(
+      children: [
+        // Loading indicator during recognition
+        if (viewModel.recognitionState == RecognitionState.recognizing)
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Detected: ${result.label}',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  const SizedBox(width: 16),
+                  Text(
+                    'Recognizing image...',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              'Confidence: ${(result.confidence * 100).toStringAsFixed(1)}%',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
+          ),
+
+        // No API credentials warning
+        if (!viewModel.hasApiCredentials &&
+            viewModel.recognitionState == RecognitionState.idle &&
+            viewModel.selectedImagePath == null)
+          Card(
+            color: Colors.orange[50],
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.warning, color: Colors.orange[700]),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'No API Key Configured',
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(
+                                color: Colors.orange[900],
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Using offline recognition only. Add a Cloud Vision API key for better accuracy.',
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.orange[900]),
+                  ),
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton.icon(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/settings').then((_) {
+                          // Refresh credentials status after returning
+                          viewModel.refreshCredentialsStatus();
+                        });
+                      },
+                      icon: const Icon(Icons.settings),
+                      label: const Text('Settings'),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
+          ),
+
+        // Error state with retry button
+        if (viewModel.recognitionState == RecognitionState.error)
+          Card(
+            color: Colors.red[50],
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.error, color: Colors.red[700]),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Recognition Failed',
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(
+                                color: Colors.red[900],
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (viewModel.errorMessage != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      viewModel.errorMessage!,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(color: Colors.red[900]),
+                    ),
+                  ],
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: viewModel.retryRecognition,
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Retry Recognition'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red[700],
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+        // Success state with results
+        if (viewModel.recognitionState == RecognitionState.success &&
+            viewModel.recognitionResult != null)
+          Card(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header with recognition source badge
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.auto_awesome,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'AI Recognition',
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onPrimaryContainer,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      const Spacer(),
+                      // Recognition source badge
+                      Chip(
+                        avatar: Icon(
+                          viewModel.usedOnlineRecognition
+                              ? Icons.cloud_done
+                              : Icons.offline_bolt,
+                          size: 16,
+                        ),
+                        label: Text(
+                          viewModel.recognitionSource,
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                        backgroundColor: viewModel.usedOnlineRecognition
+                            ? Colors.blue[50]
+                            : Colors.grey[200],
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Detected label
+                  Text(
+                    'Detected: ${viewModel.recognitionResult!.label}',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Confidence badge with color coding
+                  if (viewModel.confidence != null)
+                    Chip(
+                      avatar: Icon(
+                        viewModel.isLowConfidence
+                            ? Icons.warning_amber
+                            : Icons.check_circle,
+                        color: viewModel.isLowConfidence
+                            ? Colors.orange
+                            : Colors.green,
+                        size: 18,
+                      ),
+                      label: Text(
+                        '${(viewModel.confidence! * 100).toInt()}% match',
+                        style: TextStyle(
+                          color: viewModel.isLowConfidence
+                              ? Colors.orange[900]
+                              : Colors.green[900],
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      backgroundColor: viewModel.isLowConfidence
+                          ? Colors.orange[50]
+                          : Colors.green[50],
+                    ),
+
+                  // Alternative labels for low confidence
+                  if (viewModel.isLowConfidence &&
+                      viewModel.alternativeLabels.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    Text(
+                      'Did you mean:',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: viewModel.alternativeLabels
+                          .take(5)
+                          .map(
+                            (label) => ActionChip(
+                              label: Text(label),
+                              onPressed: () {
+                                viewModel.setName(label);
+                              },
+                              backgroundColor: Colors.white,
+                              side: BorderSide(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withValues(alpha: 0.3),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+      ],
     );
   }
 

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:home_ai_index/data/models/category.dart';
-import 'package:home_ai_index/data/models/image_recognition_result.dart';
+import 'package:home_ai_index/data/models/recognition_result.dart';
+import 'package:home_ai_index/data/repositories/location_repository.dart';
 import 'package:home_ai_index/presentation/screens/add_item_screen.dart';
 import 'package:home_ai_index/presentation/viewmodels/add_item_viewmodel.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,15 +10,17 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
-@GenerateMocks([AddItemViewModel])
+@GenerateMocks([AddItemViewModel, LocationRepository])
 import 'add_item_screen_test.mocks.dart';
 
 void main() {
   group('AddItemScreen Widget Tests', () {
     late MockAddItemViewModel mockViewModel;
+    late MockLocationRepository mockLocationRepository;
 
     setUp(() {
       mockViewModel = MockAddItemViewModel();
+      mockLocationRepository = MockLocationRepository();
 
       // Default mock behavior
       when(mockViewModel.isLoading).thenReturn(false);
@@ -33,14 +36,31 @@ void main() {
       when(mockViewModel.suggestedName).thenReturn('');
       when(mockViewModel.suggestedCategory).thenReturn(null);
       when(mockViewModel.loadCategories()).thenAnswer((_) async => {});
+
+      // New T027 properties
+      when(mockViewModel.recognitionState).thenReturn(RecognitionState.idle);
+      when(mockViewModel.hasApiCredentials).thenReturn(true);
+      when(mockViewModel.usedOnlineRecognition).thenReturn(false);
+      when(mockViewModel.confidence).thenReturn(null);
+      when(mockViewModel.alternativeLabels).thenReturn([]);
+      when(mockViewModel.isLowConfidence).thenReturn(false);
+      when(mockViewModel.recognitionSource).thenReturn('Offline');
+      when(mockViewModel.pendingQuotaWarning).thenReturn(null);
+      when(
+        mockViewModel.refreshCredentialsStatus(),
+      ).thenAnswer((_) async => {});
+
+      // Mock location repository
+      when(mockLocationRepository.getLocations()).thenAnswer((_) async => []);
     });
 
     Widget createTestWidget() {
-      return MaterialApp(
-        home: ChangeNotifierProvider<AddItemViewModel>.value(
-          value: mockViewModel,
-          child: const AddItemScreen(),
-        ),
+      return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<AddItemViewModel>.value(value: mockViewModel),
+          Provider<LocationRepository>.value(value: mockLocationRepository),
+        ],
+        child: const MaterialApp(home: AddItemScreen()),
       );
     }
 
@@ -105,20 +125,26 @@ void main() {
     testWidgets('displays recognition result card when available', (
       WidgetTester tester,
     ) async {
+      when(mockViewModel.recognitionState).thenReturn(RecognitionState.success);
       when(mockViewModel.recognitionResult).thenReturn(
-        const ImageRecognitionResult(
+        const RecognitionResult(
           label: 'banana',
           confidence: 0.95,
-          suggestedCategory: 'Food',
+          category: 'Food',
+          source: RecognitionSource.cloudVision,
         ),
       );
+      when(mockViewModel.confidence).thenReturn(0.95);
+      when(mockViewModel.isLowConfidence).thenReturn(false);
+      when(mockViewModel.usedOnlineRecognition).thenReturn(true);
+      when(mockViewModel.recognitionSource).thenReturn('Cloud Vision');
 
       await tester.pumpWidget(createTestWidget());
       await tester.pump();
 
       expect(find.text('AI Recognition'), findsOneWidget);
       expect(find.textContaining('banana'), findsOneWidget);
-      expect(find.textContaining('95'), findsOneWidget);
+      expect(find.textContaining('95% match'), findsOneWidget);
     });
 
     testWidgets('hides recognition result when null', (
@@ -144,12 +170,14 @@ void main() {
     testWidgets('displays error message when present', (
       WidgetTester tester,
     ) async {
+      when(mockViewModel.recognitionState).thenReturn(RecognitionState.error);
       when(mockViewModel.errorMessage).thenReturn('Test error message');
 
       await tester.pumpWidget(createTestWidget());
       await tester.pump();
 
       expect(find.text('Test error message'), findsOneWidget);
+      expect(find.text('Retry Recognition'), findsOneWidget);
     });
 
     testWidgets('calls pickImage when camera button tapped', (
@@ -213,7 +241,12 @@ void main() {
       WidgetTester tester,
     ) async {
       when(mockViewModel.categories).thenReturn([
-        const Category(id: '1', name: 'Food', iconCodePoint: 0xe8cc, isCustom: false),
+        const Category(
+          id: '1',
+          name: 'Food',
+          iconCodePoint: 0xe8cc,
+          isCustom: false,
+        ),
         const Category(
           id: '2',
           name: 'Electronics',

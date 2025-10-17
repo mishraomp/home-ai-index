@@ -62,3 +62,79 @@ class ModelNotInitializedException extends AppException {
   const ModelNotInitializedException([String? message])
     : super(message ?? 'ML model not initialized', 'MODEL_NOT_INITIALIZED');
 }
+
+// Network exceptions for Cloud Vision API
+class NetworkException extends AppException {
+  const NetworkException(String message, {this.details})
+    : super(message, 'NETWORK_ERROR');
+
+  final Map<String, dynamic>? details;
+
+  @override
+  String toString() {
+    if (details != null) {
+      return '[$code] $message | Details: $details';
+    }
+    return super.toString();
+  }
+}
+
+// API exceptions for Cloud Vision API
+class ApiException extends AppException {
+  const ApiException(
+    String message, {
+    this.statusCode,
+    this.details,
+    this.canRetry = false,
+  }) : super(message, 'API_ERROR');
+
+  final int? statusCode;
+  final Map<String, dynamic>? details;
+  final bool canRetry;
+
+  @override
+  String toString() {
+    final statusInfo = statusCode != null ? 'Status: $statusCode | ' : '';
+    if (details != null) {
+      return '[$code] $statusInfo$message | Retryable: $canRetry | Details: $details';
+    }
+    return '[$code] $statusInfo$message | Retryable: $canRetry';
+  }
+}
+
+// Authentication exceptions for Cloud Vision API
+class AuthenticationException extends AppException {
+  const AuthenticationException(String message, {this.details})
+    : super(message, 'AUTH_ERROR');
+
+  final Map<String, dynamic>? details;
+
+  @override
+  String toString() {
+    if (details != null) {
+      return '[$code] $message | Details: $details';
+    }
+    return super.toString();
+  }
+}
+
+// Quota exceeded exception for Cloud Vision API
+class QuotaExceededException extends AppException {
+  const QuotaExceededException(String message, {this.details})
+    : super(message, 'QUOTA_EXCEEDED');
+
+  final Map<String, dynamic>? details;
+
+  @override
+  String toString() {
+    if (details != null) {
+      return '[$code] $message | Details: $details';
+    }
+    return super.toString();
+  }
+}
+
+// Timeout exception for Cloud Vision API
+class TimeoutException extends AppException {
+  const TimeoutException(String message) : super(message, 'TIMEOUT_ERROR');
+}

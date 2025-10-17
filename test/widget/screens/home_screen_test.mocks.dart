@@ -3,18 +3,21 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i5;
 
-import 'package:home_ai_index/data/models/category.dart' as _i8;
-import 'package:home_ai_index/data/models/item.dart' as _i5;
+import 'package:home_ai_index/data/models/category.dart' as _i9;
+import 'package:home_ai_index/data/models/item.dart' as _i6;
 import 'package:home_ai_index/data/models/location.dart' as _i2;
+import 'package:home_ai_index/data/models/location_history.dart' as _i3;
 import 'package:home_ai_index/data/repositories/category_repository.dart'
-    as _i7;
-import 'package:home_ai_index/data/repositories/item_repository.dart' as _i3;
+    as _i8;
+import 'package:home_ai_index/data/repositories/item_repository.dart' as _i4;
+import 'package:home_ai_index/data/repositories/location_history_repository.dart'
+    as _i11;
 import 'package:home_ai_index/data/repositories/location_repository.dart'
-    as _i9;
+    as _i10;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i6;
+import 'package:mockito/src/dummies.dart' as _i7;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -36,37 +39,43 @@ class _FakeLocation_0 extends _i1.SmartFake implements _i2.Location {
     : super(parent, parentInvocation);
 }
 
+class _FakeLocationHistory_1 extends _i1.SmartFake
+    implements _i3.LocationHistory {
+  _FakeLocationHistory_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [ItemRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockItemRepository extends _i1.Mock implements _i3.ItemRepository {
+class MockItemRepository extends _i1.Mock implements _i4.ItemRepository {
   MockItemRepository() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Future<String> createItem(_i5.Item? item) =>
+  _i5.Future<String> createItem(_i6.Item? item) =>
       (super.noSuchMethod(
             Invocation.method(#createItem, [item]),
-            returnValue: _i4.Future<String>.value(
-              _i6.dummyValue<String>(
+            returnValue: _i5.Future<String>.value(
+              _i7.dummyValue<String>(
                 this,
                 Invocation.method(#createItem, [item]),
               ),
             ),
           )
-          as _i4.Future<String>);
+          as _i5.Future<String>);
 
   @override
-  _i4.Future<_i5.Item?> getItemById(String? id) =>
+  _i5.Future<_i6.Item?> getItemById(String? id) =>
       (super.noSuchMethod(
             Invocation.method(#getItemById, [id]),
-            returnValue: _i4.Future<_i5.Item?>.value(),
+            returnValue: _i5.Future<_i6.Item?>.value(),
           )
-          as _i4.Future<_i5.Item?>);
+          as _i5.Future<_i6.Item?>);
 
   @override
-  _i4.Future<List<_i5.Item>> getItems({
+  _i5.Future<List<_i6.Item>> getItems({
     String? categoryId,
     String? locationId,
     bool? includeUnlocated = false,
@@ -77,215 +86,273 @@ class MockItemRepository extends _i1.Mock implements _i3.ItemRepository {
               #locationId: locationId,
               #includeUnlocated: includeUnlocated,
             }),
-            returnValue: _i4.Future<List<_i5.Item>>.value(<_i5.Item>[]),
+            returnValue: _i5.Future<List<_i6.Item>>.value(<_i6.Item>[]),
           )
-          as _i4.Future<List<_i5.Item>>);
+          as _i5.Future<List<_i6.Item>>);
 
   @override
-  _i4.Future<List<_i5.Item>> getItemsByCategory(String? categoryId) =>
+  _i5.Future<List<_i6.Item>> getItemsByCategory(String? categoryId) =>
       (super.noSuchMethod(
             Invocation.method(#getItemsByCategory, [categoryId]),
-            returnValue: _i4.Future<List<_i5.Item>>.value(<_i5.Item>[]),
+            returnValue: _i5.Future<List<_i6.Item>>.value(<_i6.Item>[]),
           )
-          as _i4.Future<List<_i5.Item>>);
+          as _i5.Future<List<_i6.Item>>);
 
   @override
-  _i4.Future<List<_i5.Item>> getItemsByLocation(String? locationId) =>
+  _i5.Future<List<_i6.Item>> getItemsByLocation(String? locationId) =>
       (super.noSuchMethod(
             Invocation.method(#getItemsByLocation, [locationId]),
-            returnValue: _i4.Future<List<_i5.Item>>.value(<_i5.Item>[]),
+            returnValue: _i5.Future<List<_i6.Item>>.value(<_i6.Item>[]),
           )
-          as _i4.Future<List<_i5.Item>>);
+          as _i5.Future<List<_i6.Item>>);
 
   @override
-  _i4.Future<List<_i5.Item>> searchItems(String? query) =>
+  _i5.Future<List<_i6.Item>> searchItems(String? query) =>
       (super.noSuchMethod(
             Invocation.method(#searchItems, [query]),
-            returnValue: _i4.Future<List<_i5.Item>>.value(<_i5.Item>[]),
+            returnValue: _i5.Future<List<_i6.Item>>.value(<_i6.Item>[]),
           )
-          as _i4.Future<List<_i5.Item>>);
+          as _i5.Future<List<_i6.Item>>);
 
   @override
-  _i4.Future<void> updateItem(_i5.Item? item) =>
+  _i5.Future<void> updateItem(_i6.Item? item) =>
       (super.noSuchMethod(
             Invocation.method(#updateItem, [item]),
-            returnValue: _i4.Future<void>.value(),
-            returnValueForMissingStub: _i4.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i4.Future<void>);
+          as _i5.Future<void>);
 
   @override
-  _i4.Future<void> deleteItem(String? id) =>
+  _i5.Future<void> deleteItem(String? id) =>
       (super.noSuchMethod(
             Invocation.method(#deleteItem, [id]),
-            returnValue: _i4.Future<void>.value(),
-            returnValueForMissingStub: _i4.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i4.Future<void>);
+          as _i5.Future<void>);
 
   @override
-  _i4.Future<List<_i5.Item>> getExpiringItems(int? daysThreshold) =>
+  _i5.Future<List<_i6.Item>> getExpiringItems(int? daysThreshold) =>
       (super.noSuchMethod(
             Invocation.method(#getExpiringItems, [daysThreshold]),
-            returnValue: _i4.Future<List<_i5.Item>>.value(<_i5.Item>[]),
+            returnValue: _i5.Future<List<_i6.Item>>.value(<_i6.Item>[]),
           )
-          as _i4.Future<List<_i5.Item>>);
+          as _i5.Future<List<_i6.Item>>);
 }
 
 /// A class which mocks [CategoryRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockCategoryRepository extends _i1.Mock
-    implements _i7.CategoryRepository {
+    implements _i8.CategoryRepository {
   MockCategoryRepository() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Future<List<_i8.Category>> getCategories() =>
+  _i5.Future<List<_i9.Category>> getCategories() =>
       (super.noSuchMethod(
             Invocation.method(#getCategories, []),
-            returnValue: _i4.Future<List<_i8.Category>>.value(<_i8.Category>[]),
+            returnValue: _i5.Future<List<_i9.Category>>.value(<_i9.Category>[]),
           )
-          as _i4.Future<List<_i8.Category>>);
+          as _i5.Future<List<_i9.Category>>);
 
   @override
-  _i4.Future<_i8.Category?> getCategoryById(String? id) =>
+  _i5.Future<_i9.Category?> getCategoryById(String? id) =>
       (super.noSuchMethod(
             Invocation.method(#getCategoryById, [id]),
-            returnValue: _i4.Future<_i8.Category?>.value(),
+            returnValue: _i5.Future<_i9.Category?>.value(),
           )
-          as _i4.Future<_i8.Category?>);
+          as _i5.Future<_i9.Category?>);
 
   @override
-  _i4.Future<String> createCategory(_i8.Category? category) =>
+  _i5.Future<String> createCategory(_i9.Category? category) =>
       (super.noSuchMethod(
             Invocation.method(#createCategory, [category]),
-            returnValue: _i4.Future<String>.value(
-              _i6.dummyValue<String>(
+            returnValue: _i5.Future<String>.value(
+              _i7.dummyValue<String>(
                 this,
                 Invocation.method(#createCategory, [category]),
               ),
             ),
           )
-          as _i4.Future<String>);
+          as _i5.Future<String>);
 
   @override
-  _i4.Future<void> updateCategory(_i8.Category? category) =>
+  _i5.Future<void> updateCategory(_i9.Category? category) =>
       (super.noSuchMethod(
             Invocation.method(#updateCategory, [category]),
-            returnValue: _i4.Future<void>.value(),
-            returnValueForMissingStub: _i4.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i4.Future<void>);
+          as _i5.Future<void>);
 
   @override
-  _i4.Future<void> deleteCategory(String? id) =>
+  _i5.Future<void> deleteCategory(String? id) =>
       (super.noSuchMethod(
             Invocation.method(#deleteCategory, [id]),
-            returnValue: _i4.Future<void>.value(),
-            returnValueForMissingStub: _i4.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i4.Future<void>);
+          as _i5.Future<void>);
 }
 
 /// A class which mocks [LocationRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockLocationRepository extends _i1.Mock
-    implements _i9.LocationRepository {
+    implements _i10.LocationRepository {
   MockLocationRepository() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Future<List<_i2.Location>> getLocations({bool? rootOnly = false}) =>
+  _i5.Future<List<_i2.Location>> getLocations({bool? rootOnly = false}) =>
       (super.noSuchMethod(
             Invocation.method(#getLocations, [], {#rootOnly: rootOnly}),
-            returnValue: _i4.Future<List<_i2.Location>>.value(<_i2.Location>[]),
+            returnValue: _i5.Future<List<_i2.Location>>.value(<_i2.Location>[]),
           )
-          as _i4.Future<List<_i2.Location>>);
+          as _i5.Future<List<_i2.Location>>);
 
   @override
-  _i4.Future<_i2.Location> getLocationById(String? id) =>
+  _i5.Future<_i2.Location> getLocationById(String? id) =>
       (super.noSuchMethod(
             Invocation.method(#getLocationById, [id]),
-            returnValue: _i4.Future<_i2.Location>.value(
+            returnValue: _i5.Future<_i2.Location>.value(
               _FakeLocation_0(this, Invocation.method(#getLocationById, [id])),
             ),
           )
-          as _i4.Future<_i2.Location>);
+          as _i5.Future<_i2.Location>);
 
   @override
-  _i4.Future<List<_i2.Location>> getChildLocations(String? parentId) =>
+  _i5.Future<List<_i2.Location>> getChildLocations(String? parentId) =>
       (super.noSuchMethod(
             Invocation.method(#getChildLocations, [parentId]),
-            returnValue: _i4.Future<List<_i2.Location>>.value(<_i2.Location>[]),
+            returnValue: _i5.Future<List<_i2.Location>>.value(<_i2.Location>[]),
           )
-          as _i4.Future<List<_i2.Location>>);
+          as _i5.Future<List<_i2.Location>>);
 
   @override
-  _i4.Future<List<_i2.Location>> getLocationPath(String? locationId) =>
+  _i5.Future<List<_i2.Location>> getLocationPath(String? locationId) =>
       (super.noSuchMethod(
             Invocation.method(#getLocationPath, [locationId]),
-            returnValue: _i4.Future<List<_i2.Location>>.value(<_i2.Location>[]),
+            returnValue: _i5.Future<List<_i2.Location>>.value(<_i2.Location>[]),
           )
-          as _i4.Future<List<_i2.Location>>);
+          as _i5.Future<List<_i2.Location>>);
 
   @override
-  _i4.Future<_i2.Location> createLocation(_i2.Location? location) =>
+  _i5.Future<_i2.Location> createLocation(_i2.Location? location) =>
       (super.noSuchMethod(
             Invocation.method(#createLocation, [location]),
-            returnValue: _i4.Future<_i2.Location>.value(
+            returnValue: _i5.Future<_i2.Location>.value(
               _FakeLocation_0(
                 this,
                 Invocation.method(#createLocation, [location]),
               ),
             ),
           )
-          as _i4.Future<_i2.Location>);
+          as _i5.Future<_i2.Location>);
 
   @override
-  _i4.Future<_i2.Location> updateLocation(_i2.Location? location) =>
+  _i5.Future<_i2.Location> updateLocation(_i2.Location? location) =>
       (super.noSuchMethod(
             Invocation.method(#updateLocation, [location]),
-            returnValue: _i4.Future<_i2.Location>.value(
+            returnValue: _i5.Future<_i2.Location>.value(
               _FakeLocation_0(
                 this,
                 Invocation.method(#updateLocation, [location]),
               ),
             ),
           )
-          as _i4.Future<_i2.Location>);
+          as _i5.Future<_i2.Location>);
 
   @override
-  _i4.Future<bool> deleteLocation(String? id, {bool? deleteItems = false}) =>
+  _i5.Future<bool> deleteLocation(String? id, {bool? deleteItems = false}) =>
       (super.noSuchMethod(
             Invocation.method(
               #deleteLocation,
               [id],
               {#deleteItems: deleteItems},
             ),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i5.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i5.Future<bool>);
 
   @override
-  _i4.Future<bool> hasItems(String? locationId) =>
+  _i5.Future<bool> hasItems(String? locationId) =>
       (super.noSuchMethod(
             Invocation.method(#hasItems, [locationId]),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i5.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i5.Future<bool>);
 
   @override
-  _i4.Future<bool> validateLocationMove(
+  _i5.Future<bool> validateLocationMove(
     String? locationId,
     String? newParentId,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#validateLocationMove, [locationId, newParentId]),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i5.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i5.Future<bool>);
+}
+
+/// A class which mocks [LocationHistoryRepository].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockLocationHistoryRepository extends _i1.Mock
+    implements _i11.LocationHistoryRepository {
+  MockLocationHistoryRepository() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i5.Future<List<_i3.LocationHistory>> getHistoryForItem(
+    String? itemId, {
+    int? limit = 10,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getHistoryForItem, [itemId], {#limit: limit}),
+            returnValue: _i5.Future<List<_i3.LocationHistory>>.value(
+              <_i3.LocationHistory>[],
+            ),
+          )
+          as _i5.Future<List<_i3.LocationHistory>>);
+
+  @override
+  _i5.Future<_i3.LocationHistory> createHistoryEntry(
+    _i3.LocationHistory? entry,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#createHistoryEntry, [entry]),
+            returnValue: _i5.Future<_i3.LocationHistory>.value(
+              _FakeLocationHistory_1(
+                this,
+                Invocation.method(#createHistoryEntry, [entry]),
+              ),
+            ),
+          )
+          as _i5.Future<_i3.LocationHistory>);
+
+  @override
+  _i5.Future<int> pruneHistoryForItem(String? itemId, {int? keepLast = 10}) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #pruneHistoryForItem,
+              [itemId],
+              {#keepLast: keepLast},
+            ),
+            returnValue: _i5.Future<int>.value(0),
+          )
+          as _i5.Future<int>);
+
+  @override
+  _i5.Future<int> deleteHistoryForItem(String? itemId) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteHistoryForItem, [itemId]),
+            returnValue: _i5.Future<int>.value(0),
+          )
+          as _i5.Future<int>);
 }

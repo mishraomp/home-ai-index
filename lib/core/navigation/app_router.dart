@@ -6,6 +6,7 @@ import 'package:home_ai_index/data/repositories/location_history_repository.dart
 import 'package:home_ai_index/data/repositories/location_repository.dart';
 import 'package:home_ai_index/presentation/screens/home/home_screen.dart';
 import 'package:home_ai_index/presentation/screens/item_details_screen.dart';
+import 'package:home_ai_index/presentation/screens/settings_screen.dart';
 import 'package:provider/provider.dart';
 
 /// App routing configuration using go_router
@@ -21,6 +22,11 @@ class AppRouter {
           path: '/',
           name: 'home',
           builder: (context, state) => const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/settings',
+          name: 'settings',
+          builder: (context, state) => const SettingsScreen(),
         ),
         GoRoute(
           path: '/item/:id',

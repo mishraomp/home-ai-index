@@ -53,6 +53,28 @@ class DatabaseHelper {
     if (oldVersion < 2) {
       await _seedDefaultLocations(db);
     }
+
+    // Version 2 -> 3: Add API logs table
+    if (oldVersion < 3) {
+      await db.execute('''
+        CREATE TABLE api_logs (
+          id TEXT PRIMARY KEY,
+          timestamp TEXT NOT NULL,
+          endpoint TEXT NOT NULL,
+          status_code INTEGER,
+          latency_ms INTEGER,
+          error TEXT,
+          success INTEGER NOT NULL
+        )
+      ''');
+
+      await db.execute('''
+        CREATE INDEX idx_api_logs_timestamp ON api_logs (timestamp)
+      ''');
+      await db.execute('''
+        CREATE INDEX idx_api_logs_success ON api_logs (success)
+      ''');
+    }
   }
 
   /// Creates all database tables
@@ -134,6 +156,27 @@ class DatabaseHelper {
     ''');
     await db.execute('''
       CREATE INDEX idx_location_history_timestamp ON location_history (timestamp)
+    ''');
+
+    // API logs table for Cloud Vision API usage tracking
+    await db.execute('''
+      CREATE TABLE api_logs (
+        id TEXT PRIMARY KEY,
+        timestamp TEXT NOT NULL,
+        endpoint TEXT NOT NULL,
+        status_code INTEGER,
+        latency_ms INTEGER,
+        error TEXT,
+        success INTEGER NOT NULL
+      )
+    ''');
+
+    // Create indexes for faster queries on API logs
+    await db.execute('''
+      CREATE INDEX idx_api_logs_timestamp ON api_logs (timestamp)
+    ''');
+    await db.execute('''
+      CREATE INDEX idx_api_logs_success ON api_logs (success)
     ''');
   }
 

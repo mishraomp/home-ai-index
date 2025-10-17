@@ -33,7 +33,7 @@ dependencies:
   provider: ^6.1.0
   
   # Navigation
-  go_router: ^14.0.0
+  go_router: ^16.0.0
   
   # Local Database
   sqflite: ^2.3.0
@@ -48,8 +48,10 @@ dependencies:
   # Image Processing
   image: ^4.0.17
   
-  # TensorFlow Lite for ML
-  tflite_flutter: ^0.11.0
+  # Google Cloud Vision API Integration
+  http: ^1.1.0
+  flutter_secure_storage: ^10.0.0-beta.4
+  connectivity_plus: ^7.0.0
   
   # Value Equality
   equatable: ^2.0.5
@@ -59,6 +61,8 @@ dependencies:
   
   # Material Icons
   cupertino_icons: ^1.0.8
+  flutter_dotenv: ^6.0.0
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:
@@ -75,7 +79,7 @@ dev_dependencies:
   sqflite_common_ffi: ^2.3.0
   
   # App Icon Generator
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -83,13 +87,14 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
   sqflite_common: any
   image_picker_platform_interface: any
+  shared_preferences_platform_interface: ^2.4.1
+  flutter_secure_storage_platform_interface: ^2.0.1
+  tflite_flutter: any
 flutter:
   uses-material-design: true
 
   # Assets
   assets:
-    - assets/ml_models/mobilenet_v2.tflite
-    - assets/ml_models/imagenet_labels.txt
     - assets/images/empty_state/
     - assets/icon/app-icon.png
 

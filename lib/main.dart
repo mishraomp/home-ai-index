@@ -12,8 +12,10 @@ import 'package:home_ai_index/data/repositories/location_history_repository.dart
 import 'package:home_ai_index/data/repositories/location_history_repository_impl.dart';
 import 'package:home_ai_index/data/repositories/location_repository.dart';
 import 'package:home_ai_index/data/repositories/location_repository_impl.dart';
-import 'package:home_ai_index/data/services/image_recognition_service.dart';
-import 'package:home_ai_index/data/services/image_recognition_service_impl.dart';
+import 'package:home_ai_index/data/services/api_quota_manager.dart';
+import 'package:home_ai_index/data/services/api_usage_logger.dart';
+import 'package:home_ai_index/data/services/cloud_vision_service_impl.dart';
+import 'package:home_ai_index/data/services/recognition_service.dart';
 import 'package:home_ai_index/presentation/viewmodels/add_item_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -40,10 +42,17 @@ void main() async {
     database: database,
   );
 
-  // Initialize ML service
-  final recognitionService = await ImageRecognitionServiceImpl.create(
-    'assets/ml_models/mobilenet_v2.tflite',
+  // Initialize Cloud Vision service
+  final cloudVisionService = CloudVisionServiceImpl();
+
+  // Initialize recognition service (Cloud Vision only)
+  final recognitionService = RecognitionServiceImpl(
+    cloudVisionService: cloudVisionService,
   );
+
+  // Initialize API usage tracking and quota management
+  final apiUsageLogger = APIUsageLogger();
+  final apiQuotaManager = APIQuotaManager(usageLogger: apiUsageLogger);
 
   runApp(
     HomeAIIndexApp(
@@ -53,6 +62,7 @@ void main() async {
       locationRepository: locationRepository,
       locationHistoryRepository: locationHistoryRepository,
       recognitionService: recognitionService,
+      apiQuotaManager: apiQuotaManager,
     ),
   );
 }
@@ -69,13 +79,15 @@ class HomeAIIndexApp extends StatelessWidget {
     required this.locationRepository,
     required this.locationHistoryRepository,
     required this.recognitionService,
+    required this.apiQuotaManager,
   });
   final ItemRepositoryImpl itemRepository;
   final CategoryRepositoryImpl categoryRepository;
   final ImageRepositoryImpl imageRepository;
   final LocationRepositoryImpl locationRepository;
   final LocationHistoryRepositoryImpl locationHistoryRepository;
-  final ImageRecognitionServiceImpl recognitionService;
+  final RecognitionService recognitionService;
+  final APIQuotaManager apiQuotaManager;
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +101,10 @@ class HomeAIIndexApp extends StatelessWidget {
         Provider<LocationHistoryRepository>.value(
           value: locationHistoryRepository,
         ),
-        Provider<ImageRecognitionService>.value(value: recognitionService),
+        Provider<RecognitionService>.value(value: recognitionService),
+
+        // API Quota Manager provider
+        Provider<APIQuotaManager>.value(value: apiQuotaManager),
 
         // ViewModel providers
         ChangeNotifierProvider(
@@ -98,6 +113,7 @@ class HomeAIIndexApp extends StatelessWidget {
             categoryRepository: categoryRepository,
             imageRepository: imageRepository,
             recognitionService: recognitionService,
+            quotaManager: apiQuotaManager,
           ),
         ),
       ],

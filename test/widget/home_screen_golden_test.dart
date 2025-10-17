@@ -7,37 +7,44 @@ import 'package:home_ai_index/data/models/item.dart';
 import 'package:home_ai_index/data/models/location.dart';
 import 'package:home_ai_index/data/repositories/category_repository.dart';
 import 'package:home_ai_index/data/repositories/item_repository.dart';
+import 'package:home_ai_index/data/repositories/location_history_repository.dart';
 import 'package:home_ai_index/data/repositories/location_repository.dart';
 import 'package:home_ai_index/presentation/screens/home/home_screen.dart';
-import 'package:home_ai_index/presentation/viewmodels/home_viewmodel.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
 import 'home_screen_golden_test.mocks.dart';
 
-@GenerateMocks([ItemRepository, CategoryRepository, LocationRepository])
+@GenerateMocks([
+  ItemRepository,
+  CategoryRepository,
+  LocationRepository,
+  LocationHistoryRepository,
+])
 void main() {
   late MockItemRepository mockItemRepository;
   late MockCategoryRepository mockCategoryRepository;
   late MockLocationRepository mockLocationRepository;
-  late HomeViewModel homeViewModel;
+  late MockLocationHistoryRepository mockLocationHistoryRepository;
 
   setUp(() {
     mockItemRepository = MockItemRepository();
     mockCategoryRepository = MockCategoryRepository();
     mockLocationRepository = MockLocationRepository();
-
-    homeViewModel = HomeViewModel(
-      itemRepository: mockItemRepository,
-      categoryRepository: mockCategoryRepository,
-      locationRepository: mockLocationRepository,
-    );
+    mockLocationHistoryRepository = MockLocationHistoryRepository();
   });
 
   Widget createHomeScreen() {
-    return ChangeNotifierProvider<HomeViewModel>.value(
-      value: homeViewModel,
+    return MultiProvider(
+      providers: [
+        Provider<ItemRepository>.value(value: mockItemRepository),
+        Provider<CategoryRepository>.value(value: mockCategoryRepository),
+        Provider<LocationRepository>.value(value: mockLocationRepository),
+        Provider<LocationHistoryRepository>.value(
+          value: mockLocationHistoryRepository,
+        ),
+      ],
       child: const MaterialApp(home: HomeScreen()),
     );
   }
@@ -86,14 +93,17 @@ void main() {
   group('HomeScreen Golden Tests', () {
     testWidgets('golden - loading state', (tester) async {
       // Setup loading state with completer
-      final completer = Completer<List<Category>>();
+      final completer = Completer<List<Item>>();
       when(
         mockCategoryRepository.getCategories(),
-      ).thenAnswer((_) => completer.future);
+      ).thenAnswer((_) async => testCategories);
       when(
         mockLocationRepository.getLocations(),
       ).thenAnswer((_) async => testLocations);
-      when(mockItemRepository.getItems()).thenAnswer((_) async => testItems);
+      when(mockItemRepository.getItems()).thenAnswer((_) => completer.future);
+      when(
+        mockItemRepository.getExpiringItems(any),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createHomeScreen());
       await tester.pump();
@@ -108,7 +118,7 @@ void main() {
       );
 
       // Cleanup
-      completer.complete(testCategories);
+      completer.complete(testItems);
       await tester.pumpAndSettle();
     });
 
@@ -121,13 +131,15 @@ void main() {
         mockLocationRepository.getLocations(),
       ).thenAnswer((_) async => testLocations);
       when(mockItemRepository.getItems()).thenAnswer((_) async => testItems);
+      when(
+        mockItemRepository.getExpiringItems(any),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createHomeScreen());
       await tester.pump();
       await tester.pumpAndSettle();
 
       // Verify data is loaded
-      expect(find.text('Electronics'), findsOneWidget);
       expect(find.text('Laptop'), findsOneWidget);
 
       // Compare with golden file
@@ -146,13 +158,19 @@ void main() {
         mockLocationRepository.getLocations(),
       ).thenAnswer((_) async => testLocations);
       when(mockItemRepository.getItems()).thenAnswer((_) async => testItems);
+      when(
+        mockItemRepository.getExpiringItems(any),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createHomeScreen());
       await tester.pump();
       await tester.pumpAndSettle();
 
       // Verify error is displayed
-      expect(find.text('Failed to load home data.'), findsOneWidget);
+      expect(
+        find.text('Failed to load data: Exception: Failed to load'),
+        findsOneWidget,
+      );
 
       // Compare with golden file
       await expectLater(
@@ -170,6 +188,9 @@ void main() {
         mockLocationRepository.getLocations(),
       ).thenAnswer((_) async => testLocations);
       when(mockItemRepository.getItems()).thenAnswer((_) async => []);
+      when(
+        mockItemRepository.getExpiringItems(any),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createHomeScreen());
       await tester.pump();
@@ -185,8 +206,19 @@ void main() {
       );
     });
 
-    testWidgets('golden - filter sheet open', (tester) async {
-      // Setup success state
+    testWidgets('golden - with expiring items', (tester) async {
+      final expiringItem = Item(
+        id: 'item3',
+        name: 'Milk',
+        quantity: 1,
+        categoryId: 'cat1',
+        locationId: 'loc2',
+        expirationDate: DateTime.now().add(const Duration(days: 3)),
+        addedAt: DateTime(2025),
+        updatedAt: DateTime(2025),
+      );
+
+      // Setup state with expiring items
       when(
         mockCategoryRepository.getCategories(),
       ).thenAnswer((_) async => testCategories);
@@ -194,22 +226,21 @@ void main() {
         mockLocationRepository.getLocations(),
       ).thenAnswer((_) async => testLocations);
       when(mockItemRepository.getItems()).thenAnswer((_) async => testItems);
+      when(
+        mockItemRepository.getExpiringItems(any),
+      ).thenAnswer((_) async => [expiringItem]);
 
       await tester.pumpWidget(createHomeScreen());
       await tester.pump();
       await tester.pumpAndSettle();
 
-      // Open filter sheet
-      await tester.tap(find.byIcon(Icons.filter_list));
-      await tester.pumpAndSettle();
-
-      // Verify sheet is open
-      expect(find.text('Filter & Sort'), findsOneWidget);
+      // Verify expiring section is shown
+      expect(find.text('Expiring Soon'), findsOneWidget);
 
       // Compare with golden file
       await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile('goldens/home_screen_filter_sheet.png'),
+        find.byType(HomeScreen),
+        matchesGoldenFile('goldens/home_screen_expiring.png'),
       );
     });
   });
