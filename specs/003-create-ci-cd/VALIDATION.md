@@ -208,7 +208,7 @@ All items must be ✅ before Phase 1 is considered complete:
 
 ### If workflow fails on first run:
 1. Check GitHub Actions logs for specific error
-2. Verify Flutter version 3.16.5 is available
+2. Verify Flutter version 3.35.6 is available
 3. Check for network issues (pub.dev, GitHub)
 4. Review dependency compatibility
 

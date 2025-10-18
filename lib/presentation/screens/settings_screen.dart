@@ -95,7 +95,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 color: Colors.green[700],
                               ),
                               const SizedBox(width: 12),
-                              Expanded(
+                              const Expanded(
                                 child: Text(
                                   'API credentials configured',
                                   style: TextStyle(

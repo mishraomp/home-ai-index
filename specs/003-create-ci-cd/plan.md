@@ -13,7 +13,7 @@ Implement a comprehensive CI/CD pipeline using GitHub Actions to automate build 
 
 ## Technical Context
 
-**Language/Version**: Dart 3.2+ / Flutter 3.16+  
+**Language/Version**: Dart 3.9+ / Flutter 3.35+  
 **Primary Dependencies**: GitHub Actions, Fastlane, flutter_lints 6.0.0, lcov (coverage)  
 **Storage**: GitHub Artifacts (build outputs, test reports, coverage), GitHub Packages (optional Docker images for custom runners)  
 **Testing**: flutter test (unit/widget/integration), 530+ existing tests, mockito 5.4.3  

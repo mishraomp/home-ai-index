@@ -28,7 +28,7 @@ jobs:
       - name: Setup Flutter
         uses: ./.github/actions/setup-flutter
         with:
-          flutter-version: '3.16.5'
+          flutter-version: '3.35.6'
       
       - name: Verify formatting
         run: dart format --set-exit-if-changed .
@@ -53,7 +53,7 @@ jobs:
       - name: Setup Flutter
         uses: ./.github/actions/setup-flutter
         with:
-          flutter-version: '3.16.5'
+          flutter-version: '3.35.6'
       
       - name: Run tests
         uses: ./.github/actions/run-tests
@@ -93,7 +93,7 @@ jobs:
       - name: Setup Flutter
         uses: ./.github/actions/setup-flutter
         with:
-          flutter-version: '3.16.5'
+          flutter-version: '3.35.6'
       
       - name: Increment build number
         id: version

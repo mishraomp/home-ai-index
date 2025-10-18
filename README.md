@@ -3,8 +3,8 @@
 <div align="center">
 
 ![CI](https://github.com/yourusername/home-ai-index/actions/workflows/ci.yml/badge.svg)
-![Flutter](https://img.shields.io/badge/Flutter-3.16+-02569B?logo=flutter&logoColor=white)
-![Dart](https://img.shields.io/badge/Dart-3.2+-0175C2?logo=dart&logoColor=white)
+![Flutter](https://img.shields.io/badge/Flutter-3.35+-02569B?logo=flutter&logoColor=white)
+![Dart](https://img.shields.io/badge/Dart-3.9+-0175C2?logo=dart&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Tests](https://img.shields.io/badge/tests-530%20passing-success)
 ![Coverage](https://img.shields.io/badge/coverage-80%25+-brightgreen)
@@ -139,8 +139,8 @@ flutter test --coverage
 
 ### Prerequisites
 
-- Flutter SDK 3.16.0 or higher
-- Dart SDK 3.2.0 or higher
+- Flutter SDK 3.35.0 or higher
+- Dart SDK 3.9.0 or higher
 - Android Studio / VS Code with Flutter extensions
 - Android SDK (for Android development)
 - Xcode (for iOS development, macOS only)

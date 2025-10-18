@@ -219,7 +219,7 @@ flutter_version: String         # Flutter SDK version used
 - `git_ref`: Branch name or tag (e.g., `refs/heads/main`, `refs/tags/v1.0.0`)
 - `build_date`: ISO 8601 timestamp
 - `runner`: GitHub runner identifier
-- `flutter_version`: Flutter SDK version (e.g., 3.16.5)
+- `flutter_version`: Flutter SDK version (e.g., 3.35.6)
 
 **Generation**:
 ```bash
@@ -349,7 +349,7 @@ lcov --summary coverage/lcov.info
 
 ```yaml
 env:
-  FLUTTER_VERSION: '3.16.5'
+  FLUTTER_VERSION: '3.35.6'
   JAVA_VERSION: '17'
   RUBY_VERSION: '3.1'
   NODE_VERSION: '18'

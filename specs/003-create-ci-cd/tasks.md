@@ -63,7 +63,7 @@ This file defines tasks for **Phase 1 only** - implementing the core CI pipeline
 ### Action-1: Create setup-flutter Action
 - [X] **Task**: Create `.github/actions/setup-flutter/action.yml`
 - **Requirements**:
-  - Input: `flutter-version` (default: '3.16.5')
+  - Input: `flutter-version` (default: '3.35.6')
   - Input: `cache-key` (default: 'flutter')
   - Cache Flutter SDK at `${{ runner.tool_cache }}/flutter`
   - Cache pub dependencies at `~/.pub-cache`
@@ -172,7 +172,7 @@ This file defines tasks for **Phase 1 only** - implementing the core CI pipeline
 - [X] **Task**: Create `.github/workflows/ci.yml`
 - **Requirements**:
   - Trigger on: `push` (all branches), `pull_request` (main, develop)
-  - Environment variables: `FLUTTER_VERSION: '3.16.5'`, `JAVA_VERSION: '17'`
+  - Environment variables: `FLUTTER_VERSION: '3.35.6'`, `JAVA_VERSION: '17'`
   - Job 1: `lint` (ubuntu-latest)
     - Checkout code
     - Use setup-flutter action

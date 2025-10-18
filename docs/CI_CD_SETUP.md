@@ -79,8 +79,8 @@ The CI/CD pipeline automates:
 
 ### Required Tools
 
-- Flutter 3.16.5 or later
-- Dart 3.2+
+- Flutter 3.35.6 or later
+- Dart 3.9+
 - Java 17 (for Android builds)
 - lcov (for coverage reporting)
 
