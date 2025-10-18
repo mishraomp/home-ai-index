@@ -44,6 +44,12 @@ runs:
       shell: bash
       run: |
         if [ -f coverage/lcov.info ]; then
+          # Install lcov if not available
+          if ! command -v lcov &> /dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y lcov
+          fi
+          
           # Generate lcov summary
           lcov --summary coverage/lcov.info 2>&1 | tee coverage-summary.txt
           

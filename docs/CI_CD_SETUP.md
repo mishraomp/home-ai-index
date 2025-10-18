@@ -396,6 +396,6 @@ Automatically cancels outdated runs on new pushes.
 
 ---
 
-**Last Updated:** $(date -u '+%Y-%m-%d')  
+**Last Updated:** 2025-10-18  
 **Maintained By:** DevOps Team  
 **Contact:** [Create an issue](../../issues/new)

@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![CI](https://github.com/yourusername/home-ai-index/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/mishraomp/home-ai-index/actions/workflows/ci.yml/badge.svg)
 ![Flutter](https://img.shields.io/badge/Flutter-3.35+-02569B?logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-3.9+-0175C2?logo=dart&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)

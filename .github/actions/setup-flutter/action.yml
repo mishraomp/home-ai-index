@@ -17,15 +17,6 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - name: Cache Flutter SDK
-      uses: actions/cache@v3
-      with:
-        path: ${{ runner.tool_cache }}/flutter
-        key: ${{ runner.os }}-flutter-${{ inputs.flutter-version }}-${{ inputs.cache-key }}
-        restore-keys: |
-          ${{ runner.os }}-flutter-${{ inputs.flutter-version }}-
-          ${{ runner.os }}-flutter-
-
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:

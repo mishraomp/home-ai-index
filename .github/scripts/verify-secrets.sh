@@ -64,12 +64,12 @@ if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
     validate_base64 "ANDROID_KEYSTORE_BASE64"
 fi
 
-# Optional: Check service account key if provided
-if [ -n "$ANDROID_SERVICE_ACCOUNT_JSON_BASE64" ]; then
+# Optional: Check service account key if provided (expects raw JSON, not base64)
+if [ -n "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON" ]; then
     echo ""
     echo "📋 Checking Google Play service account (optional)..."
-    check_secret "ANDROID_SERVICE_ACCOUNT_JSON_BASE64"
-    validate_base64 "ANDROID_SERVICE_ACCOUNT_JSON_BASE64"
+    check_secret "GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"
+    # No base64 validation; expects raw JSON as per documentation
 fi
 
 # Summary

@@ -42,10 +42,22 @@ echo "🏷️  Generating coverage badge data..."
 BADGE_COLOR="red"
 if [ "$COVERAGE_PCT" != "N/A" ]; then
     PCT_NUM=$(echo "$COVERAGE_PCT" | sed 's/%//')
-    if (( $(echo "$PCT_NUM >= 80" | bc -l) )); then
-        BADGE_COLOR="brightgreen"
-    elif (( $(echo "$PCT_NUM >= 60" | bc -l) )); then
-        BADGE_COLOR="yellow"
+    
+    # Use bc for float comparisons if available, otherwise fallback to integer comparison
+    if command -v bc &> /dev/null; then
+        if (( $(echo "$PCT_NUM >= 80" | bc -l) )); then
+            BADGE_COLOR="brightgreen"
+        elif (( $(echo "$PCT_NUM >= 60" | bc -l) )); then
+            BADGE_COLOR="yellow"
+        fi
+    else
+        # Fallback to integer comparison if bc is not available
+        PCT_NUM_INT=${PCT_NUM%.*}
+        if [ "$PCT_NUM_INT" -ge 80 ]; then
+            BADGE_COLOR="brightgreen"
+        elif [ "$PCT_NUM_INT" -ge 60 ]; then
+            BADGE_COLOR="yellow"
+        fi
     fi
 fi
 
@@ -87,8 +99,10 @@ if [ -n "$GITHUB_EVENT_NAME" ] && [ "$GITHUB_EVENT_NAME" = "pull_request" ]; the
         # Prepare comment body
         COMMENT_BODY=$(cat coverage/summary.md)
         
-        # Escape JSON
-        COMMENT_JSON=$(jq -n --arg body "$COMMENT_BODY" '{body: $body}')
+        # Escape JSON (works without jq dependency)
+        # Replace newlines with \n and escape double quotes
+        ESCAPED_BODY=$(printf '%s' "$COMMENT_BODY" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read())[1:-1])')
+        COMMENT_JSON="{\"body\": \"$ESCAPED_BODY\"}"
         
         # Post comment using GitHub API
         if curl -s -X POST \
