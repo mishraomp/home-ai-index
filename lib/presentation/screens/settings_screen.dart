@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:home_ai_index/data/services/api_quota_manager.dart';
 import 'package:home_ai_index/presentation/viewmodels/settings_viewmodel.dart';
 import 'package:home_ai_index/presentation/widgets/quota_warning_dialog.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +20,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _hasLoadedCredentials = false;
 
   @override
+  void initState() {
+    super.initState();
+    // Reset flag to ensure fresh load from database
+    _hasLoadedCredentials = false;
+  }
+
+  @override
   void dispose() {
     _apiKeyController.dispose();
     _projectIdController.dispose();
@@ -28,10 +36,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _loadExistingCredentials(SettingsViewModel viewModel) async {
     if (_hasLoadedCredentials) return;
 
+    // Always reload fresh from database
     final credentials = await viewModel.loadStoredCredentials();
-    if (credentials['apiKey'] != null && mounted) {
+    if (mounted) {
       setState(() {
-        _apiKeyController.text = credentials['apiKey']!;
+        _apiKeyController.text = credentials['apiKey'] ?? '';
         _projectIdController.text = credentials['projectId'] ?? '';
         _hasLoadedCredentials = true;
       });
@@ -41,7 +50,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => SettingsViewModel(),
+      create: (context) => SettingsViewModel(
+        quotaManager: Provider.of<APIQuotaManager>(context, listen: false),
+      ),
       child: Scaffold(
         appBar: AppBar(title: const Text('Settings')),
         body: Consumer<SettingsViewModel>(
@@ -76,7 +87,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Card(
                         color: Colors.green[50],
                         child: Padding(
-                          padding: const EdgeInsets.all(12.0),
+                          padding: const EdgeInsets.all(16.0),
                           child: Row(
                             children: [
                               Icon(
@@ -84,9 +95,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 color: Colors.green[700],
                               ),
                               const SizedBox(width: 12),
-                              const Text(
-                                'API credentials configured',
-                                style: TextStyle(fontWeight: FontWeight.w500),
+                              Expanded(
+                                child: Text(
+                                  'API credentials configured',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.green,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -117,10 +133,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const SizedBox(height: 24),
 
                     // Quota Status Banner (if quota manager available)
-                    if (viewModel.quotaStatus != null) ...[
+                    /* if (viewModel.quotaStatus != null) ...[
                       QuotaStatusBanner(status: viewModel.quotaStatus!),
                       const SizedBox(height: 24),
-                    ],
+                    ], */
 
                     // API Key field
                     TextFormField(
@@ -319,26 +335,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                       _buildUsageCard(
                         icon: Icons.api,
-                        title: 'API Calls Today',
-                        value: '0', // TODO: Connect to actual usage data
-                        subtitle: 'Refreshes at midnight',
+                        title: 'API Calls This Month',
+                        value: '${viewModel.quotaStatus?.currentUsage ?? 0}',
+                        subtitle:
+                            'of ${viewModel.quotaStatus?.freeLimit ?? 1000} free calls',
                         color: Colors.blue,
                       ),
                       const SizedBox(height: 12),
 
                       _buildUsageCard(
-                        icon: Icons.speed,
-                        title: 'Average Latency',
-                        value: '0ms', // TODO: Connect to actual data
-                        subtitle: 'Response time',
+                        icon: Icons.info_outline,
+                        title: 'Remaining Free Calls',
+                        value:
+                            '${viewModel.quotaStatus?.remainingFreeUnits ?? 0}',
+                        subtitle: 'Resets monthly',
                         color: Colors.green,
                       ),
                       const SizedBox(height: 12),
 
                       _buildUsageCard(
                         icon: Icons.attach_money,
-                        title: 'Estimated Cost Today',
-                        value: '\$0.00', // TODO: Connect to actual data
+                        title: 'Estimated Monthly Cost',
+                        value:
+                            '\$${viewModel.quotaStatus?.estimatedMonthlyCost.toStringAsFixed(2) ?? "0.00"}',
                         subtitle: 'Based on \$1.50 per 1,000 requests',
                         color: Colors.orange,
                       ),

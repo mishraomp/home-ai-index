@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:home_ai_index/data/services/api_usage_logger.dart';
 
 /// Google Cloud Vision API Quota Manager
@@ -32,6 +33,15 @@ class APIQuotaManager {
   Future<QuotaStatus> checkQuota() async {
     final monthLogs = await _usageLogger.getMonthLogs();
     final successfulCalls = monthLogs.where((log) => log.success).length;
+
+    // Debug logging
+    debugPrint('🔍 QUOTA MANAGER - checkQuota():');
+    debugPrint('   Total logs this month: ${monthLogs.length}');
+    debugPrint('   Successful calls: $successfulCalls');
+    if (monthLogs.isNotEmpty) {
+      debugPrint('   First log: ${monthLogs.first}');
+      debugPrint('   Last log: ${monthLogs.last}');
+    }
 
     return QuotaStatus(
       currentUsage: successfulCalls,

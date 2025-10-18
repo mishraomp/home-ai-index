@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:home_ai_index/data/services/api_credentials_manager.dart';
+import 'package:home_ai_index/data/services/api_quota_manager.dart';
 import 'package:home_ai_index/presentation/screens/settings_screen.dart';
 import 'package:home_ai_index/presentation/viewmodels/settings_viewmodel.dart';
 import 'package:mockito/annotations.dart';
@@ -9,23 +10,31 @@ import 'package:provider/provider.dart';
 
 import 'settings_screen_test.mocks.dart';
 
-@GenerateNiceMocks([MockSpec<APICredentialsManager>()])
+@GenerateNiceMocks([
+  MockSpec<APICredentialsManager>(),
+  MockSpec<APIQuotaManager>(),
+])
 void main() {
   group('SettingsScreen Widget Tests (T045)', () {
     late MockAPICredentialsManager mockCredentialsManager;
+    late MockAPIQuotaManager mockQuotaManager;
 
     setUp(() {
       mockCredentialsManager = MockAPICredentialsManager();
+      mockQuotaManager = MockAPIQuotaManager();
     });
 
     Widget createSettingsScreen({SettingsViewModel? viewModel}) {
-      return MaterialApp(
-        home: viewModel != null
-            ? ChangeNotifierProvider<SettingsViewModel>.value(
-                value: viewModel,
-                child: const Scaffold(body: SettingsScreenContent()),
-              )
-            : const SettingsScreen(),
+      return MultiProvider(
+        providers: [Provider<APIQuotaManager>.value(value: mockQuotaManager)],
+        child: MaterialApp(
+          home: viewModel != null
+              ? ChangeNotifierProvider<SettingsViewModel>.value(
+                  value: viewModel,
+                  child: const Scaffold(body: SettingsScreenContent()),
+                )
+              : const SettingsScreen(),
+        ),
       );
     }
 
@@ -183,13 +192,18 @@ void main() {
 
   group('SettingsScreen Validation Tests (T046)', () {
     late MockAPICredentialsManager mockCredentialsManager;
+    late MockAPIQuotaManager mockQuotaManager;
 
     setUp(() {
       mockCredentialsManager = MockAPICredentialsManager();
+      mockQuotaManager = MockAPIQuotaManager();
     });
 
     Widget createSettingsScreen() {
-      return const MaterialApp(home: SettingsScreen());
+      return MultiProvider(
+        providers: [Provider<APIQuotaManager>.value(value: mockQuotaManager)],
+        child: const MaterialApp(home: SettingsScreen()),
+      );
     }
 
     testWidgets('validates empty API key', (tester) async {

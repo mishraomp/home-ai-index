@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:home_ai_index/data/models/category.dart';
 import 'package:home_ai_index/data/models/location.dart';
 import 'package:home_ai_index/presentation/viewmodels/add_item_viewmodel.dart';
@@ -28,7 +29,15 @@ class _AddItemScreenState extends State<AddItemScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AddItemViewModel>().loadCategories();
+      final viewModel = context.read<AddItemViewModel>();
+      // Reset form to clear any previous state
+      viewModel.reset();
+      // Load fresh categories from database
+      viewModel.loadCategories();
+      // Clear text controllers
+      _nameController.clear();
+      _notesController.clear();
+      _quantityController.text = '1';
     });
   }
 
@@ -49,12 +58,21 @@ class _AddItemScreenState extends State<AddItemScreen> {
           IconButton(
             icon: const Icon(Icons.settings),
             tooltip: 'API Settings',
-            onPressed: () {
+            onPressed: () async {
               final viewModel = context.read<AddItemViewModel>();
-              Navigator.pushNamed(context, '/settings').then((_) {
-                // Refresh credentials status after returning
+              await context.push('/settings');
+
+              if (mounted) {
+                // Reload fresh data from database when returning
+                viewModel.reset();
+                viewModel.loadCategories();
                 viewModel.refreshCredentialsStatus();
-              });
+
+                // Clear text controllers
+                _nameController.clear();
+                _notesController.clear();
+                _quantityController.text = '1';
+              }
             },
           ),
           IconButton(icon: const Icon(Icons.check), onPressed: _saveItem),

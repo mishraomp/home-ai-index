@@ -118,7 +118,21 @@ class APIUsageLogger {
     final startOfMonth = DateTime(now.year, now.month);
     final endOfMonth = DateTime(now.year, now.month + 1);
 
-    return getLogsByDateRange(start: startOfMonth, end: endOfMonth);
+    // Debug logging
+    print('🔍 API USAGE LOGGER - getMonthLogs():');
+    print('   Current time: $now');
+    print('   Start of month: $startOfMonth');
+    print('   End of month: $endOfMonth');
+
+    final logs = await getLogsByDateRange(start: startOfMonth, end: endOfMonth);
+
+    print('   Total logs returned: ${logs.length}');
+    if (logs.isNotEmpty) {
+      print('   First log: ${logs.first}');
+      print('   Last log: ${logs.last}');
+    }
+
+    return logs;
   }
 
   /// Get statistics for a list of logs

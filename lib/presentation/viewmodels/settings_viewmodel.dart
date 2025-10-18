@@ -50,12 +50,19 @@ class SettingsViewModel extends ChangeNotifier {
   Future<void> _loadQuotaStatus() async {
     if (_quotaManager != null) {
       try {
+        debugPrint('🔍 LOADING QUOTA STATUS...');
         _quotaStatus = await _quotaManager.checkQuota();
+        debugPrint('✅ QUOTA STATUS LOADED:');
+        debugPrint('   Current Usage: ${_quotaStatus?.currentUsage}');
+        debugPrint('   Free Limit: ${_quotaStatus?.freeLimit}');
+        debugPrint('   Remaining: ${_quotaStatus?.remainingFreeUnits}');
         notifyListeners();
       } catch (e) {
         // Quota status is optional, don't fail if unavailable
-        debugPrint('Failed to load quota status: $e');
+        debugPrint('❌ Failed to load quota status: $e');
       }
+    } else {
+      debugPrint('⚠️  Quota manager is null!');
     }
   }
 

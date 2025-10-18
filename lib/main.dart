@@ -42,17 +42,17 @@ void main() async {
     database: database,
   );
 
-  // Initialize Cloud Vision service
-  final cloudVisionService = CloudVisionServiceImpl();
+  // Initialize API usage tracking and quota management FIRST
+  final apiUsageLogger = APIUsageLogger();
+  final apiQuotaManager = APIQuotaManager(usageLogger: apiUsageLogger);
+
+  // Initialize Cloud Vision service with shared logger
+  final cloudVisionService = CloudVisionServiceImpl(logger: apiUsageLogger);
 
   // Initialize recognition service (Cloud Vision only)
   final recognitionService = RecognitionServiceImpl(
     cloudVisionService: cloudVisionService,
   );
-
-  // Initialize API usage tracking and quota management
-  final apiUsageLogger = APIUsageLogger();
-  final apiQuotaManager = APIQuotaManager(usageLogger: apiUsageLogger);
 
   runApp(
     HomeAIIndexApp(

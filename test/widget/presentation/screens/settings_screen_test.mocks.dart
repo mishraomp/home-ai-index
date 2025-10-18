@@ -3,12 +3,14 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
+import 'dart:async' as _i4;
 
-import 'package:home_ai_index/data/models/api_credentials.dart' as _i4;
+import 'package:home_ai_index/data/models/api_credentials.dart' as _i5;
 import 'package:home_ai_index/data/services/api_credentials_manager.dart'
-    as _i2;
+    as _i3;
+import 'package:home_ai_index/data/services/api_quota_manager.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -25,74 +27,125 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
+class _FakeQuotaStatus_0 extends _i1.SmartFake implements _i2.QuotaStatus {
+  _FakeQuotaStatus_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [APICredentialsManager].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockAPICredentialsManager extends _i1.Mock
-    implements _i2.APICredentialsManager {
+    implements _i3.APICredentialsManager {
   @override
-  _i3.Future<void> save({required String? apiKey, String? projectId}) =>
+  _i4.Future<void> save({required String? apiKey, String? projectId}) =>
       (super.noSuchMethod(
             Invocation.method(#save, [], {
               #apiKey: apiKey,
               #projectId: projectId,
             }),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
           )
-          as _i3.Future<void>);
+          as _i4.Future<void>);
 
   @override
-  _i3.Future<_i4.APICredentials?> load() =>
+  _i4.Future<_i5.APICredentials?> load() =>
       (super.noSuchMethod(
             Invocation.method(#load, []),
-            returnValue: _i3.Future<_i4.APICredentials?>.value(),
-            returnValueForMissingStub: _i3.Future<_i4.APICredentials?>.value(),
+            returnValue: _i4.Future<_i5.APICredentials?>.value(),
+            returnValueForMissingStub: _i4.Future<_i5.APICredentials?>.value(),
           )
-          as _i3.Future<_i4.APICredentials?>);
+          as _i4.Future<_i5.APICredentials?>);
 
   @override
-  _i3.Future<void> clear() =>
+  _i4.Future<void> clear() =>
       (super.noSuchMethod(
             Invocation.method(#clear, []),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
           )
-          as _i3.Future<void>);
+          as _i4.Future<void>);
 
   @override
-  _i3.Future<bool> hasValidCredentials() =>
+  _i4.Future<bool> hasValidCredentials() =>
       (super.noSuchMethod(
             Invocation.method(#hasValidCredentials, []),
-            returnValue: _i3.Future<bool>.value(false),
-            returnValueForMissingStub: _i3.Future<bool>.value(false),
+            returnValue: _i4.Future<bool>.value(false),
+            returnValueForMissingStub: _i4.Future<bool>.value(false),
           )
-          as _i3.Future<bool>);
+          as _i4.Future<bool>);
 
   @override
-  _i3.Future<String?> getApiKey() =>
+  _i4.Future<String?> getApiKey() =>
       (super.noSuchMethod(
             Invocation.method(#getApiKey, []),
-            returnValue: _i3.Future<String?>.value(),
-            returnValueForMissingStub: _i3.Future<String?>.value(),
+            returnValue: _i4.Future<String?>.value(),
+            returnValueForMissingStub: _i4.Future<String?>.value(),
           )
-          as _i3.Future<String?>);
+          as _i4.Future<String?>);
 
   @override
-  _i3.Future<String?> getProjectId() =>
+  _i4.Future<String?> getProjectId() =>
       (super.noSuchMethod(
             Invocation.method(#getProjectId, []),
-            returnValue: _i3.Future<String?>.value(),
-            returnValueForMissingStub: _i3.Future<String?>.value(),
+            returnValue: _i4.Future<String?>.value(),
+            returnValueForMissingStub: _i4.Future<String?>.value(),
           )
-          as _i3.Future<String?>);
+          as _i4.Future<String?>);
 
   @override
-  _i3.Future<bool> hasProjectId() =>
+  _i4.Future<bool> hasProjectId() =>
       (super.noSuchMethod(
             Invocation.method(#hasProjectId, []),
-            returnValue: _i3.Future<bool>.value(false),
-            returnValueForMissingStub: _i3.Future<bool>.value(false),
+            returnValue: _i4.Future<bool>.value(false),
+            returnValueForMissingStub: _i4.Future<bool>.value(false),
           )
-          as _i3.Future<bool>);
+          as _i4.Future<bool>);
+}
+
+/// A class which mocks [APIQuotaManager].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockAPIQuotaManager extends _i1.Mock implements _i2.APIQuotaManager {
+  @override
+  _i4.Future<_i2.QuotaStatus> checkQuota() =>
+      (super.noSuchMethod(
+            Invocation.method(#checkQuota, []),
+            returnValue: _i4.Future<_i2.QuotaStatus>.value(
+              _FakeQuotaStatus_0(this, Invocation.method(#checkQuota, [])),
+            ),
+            returnValueForMissingStub: _i4.Future<_i2.QuotaStatus>.value(
+              _FakeQuotaStatus_0(this, Invocation.method(#checkQuota, [])),
+            ),
+          )
+          as _i4.Future<_i2.QuotaStatus>);
+
+  @override
+  _i4.Future<_i2.QuotaWarning?> shouldWarnUser() =>
+      (super.noSuchMethod(
+            Invocation.method(#shouldWarnUser, []),
+            returnValue: _i4.Future<_i2.QuotaWarning?>.value(),
+            returnValueForMissingStub: _i4.Future<_i2.QuotaWarning?>.value(),
+          )
+          as _i4.Future<_i2.QuotaWarning?>);
+
+  @override
+  _i4.Future<String> getQuotaStatusMessage() =>
+      (super.noSuchMethod(
+            Invocation.method(#getQuotaStatusMessage, []),
+            returnValue: _i4.Future<String>.value(
+              _i6.dummyValue<String>(
+                this,
+                Invocation.method(#getQuotaStatusMessage, []),
+              ),
+            ),
+            returnValueForMissingStub: _i4.Future<String>.value(
+              _i6.dummyValue<String>(
+                this,
+                Invocation.method(#getQuotaStatusMessage, []),
+              ),
+            ),
+          )
+          as _i4.Future<String>);
 }

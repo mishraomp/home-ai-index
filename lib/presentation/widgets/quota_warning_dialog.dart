@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:home_ai_index/data/services/api_quota_manager.dart';
 
@@ -128,6 +129,9 @@ class QuotaStatusBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(
+      '🎨 BANNER BUILD - Current: ${status.currentUsage}, Limit: ${status.freeLimit}, Remaining: ${status.remainingFreeUnits}',
+    );
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -165,17 +169,30 @@ class QuotaStatusBanner extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '${status.currentUsage} / ${status.freeLimit} calls used',
-                style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+              Builder(
+                builder: (context) {
+                  final text =
+                      '${status.currentUsage} / ${status.freeLimit} calls used';
+                  debugPrint('📊 USAGE TEXT: "$text"');
+                  return Text(
+                    text,
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+                  );
+                },
               ),
-              Text(
-                '${status.remainingFreeUnits} remaining',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: _getTextColor(),
-                ),
+              Builder(
+                builder: (context) {
+                  final text = '${status.remainingFreeUnits} remaining';
+                  debugPrint('📊 REMAINING TEXT: "$text"');
+                  return Text(
+                    text,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: _getTextColor(),
+                    ),
+                  );
+                },
               ),
             ],
           ),
