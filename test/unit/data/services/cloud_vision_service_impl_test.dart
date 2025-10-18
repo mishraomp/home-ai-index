@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -608,17 +609,16 @@ void main() {
             imageBytes: Uint8List.fromList([1, 2, 3]),
           );
 
+          // Create a completer that we never complete to simulate hanging request
+          final completer = Completer<http.Response>();
+
           when(
             mockClient.post(
               any,
               headers: anyNamed('headers'),
               body: anyNamed('body'),
             ),
-          ).thenAnswer((_) async {
-            // Delay longer than the API timeout (10 seconds)
-            await Future.delayed(const Duration(seconds: 15));
-            return http.Response('Too late', 200);
-          });
+          ).thenAnswer((_) => completer.future);
 
           // Act & Assert
           await expectLater(
@@ -626,8 +626,8 @@ void main() {
             throwsA(isA<TimeoutException>()),
           );
         },
-        timeout: const Timeout(Duration(seconds: 12)),
-      ); // Test timeout slightly longer than API timeout
+        timeout: const Timeout(Duration(seconds: 15)),
+      ); // Test timeout must be longer than API timeout (10s)
     });
   });
 }
