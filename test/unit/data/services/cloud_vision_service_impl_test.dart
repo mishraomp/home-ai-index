@@ -620,8 +620,8 @@ void main() {
         });
 
         // Act & Assert
-        expect(
-          () => service.recognizeImage(request, credentials),
+        await expectLater(
+          service.recognizeImage(request, credentials),
           throwsA(isA<TimeoutException>()),
         );
       });
