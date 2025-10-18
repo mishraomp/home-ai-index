@@ -613,9 +613,8 @@ void main() {
             body: anyNamed('body'),
           ),
         ).thenAnswer((_) async {
-          await Future.delayed(
-            const Duration(seconds: 15),
-          ); // Longer than timeout
+          // Delay longer than the API timeout (10 seconds)
+          await Future.delayed(const Duration(seconds: 15));
           return http.Response('Too late', 200);
         });
 
@@ -624,7 +623,7 @@ void main() {
           service.recognizeImage(request, credentials),
           throwsA(isA<TimeoutException>()),
         );
-      });
+      }, timeout: const Timeout(Duration(seconds: 12))); // Test timeout slightly longer than API timeout
     });
   });
 }
