@@ -1,0 +1,148 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop, 'feature/**' ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+# Cancel in-progress runs for the same workflow on the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Job 1: Code quality checks (lint + analyze)
+  lint:
+    name: Lint & Analyze
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better analysis
+      
+      - name: Setup Flutter
+        uses: ./.github/actions/setup-flutter
+        with:
+          flutter-version: '3.16.5'
+      
+      - name: Verify formatting
+        run: dart format --set-exit-if-changed .
+      
+      - name: Run analyzer
+        run: flutter analyze --fatal-infos --fatal-warnings
+      
+      - name: Check for outdated dependencies
+        run: flutter pub outdated --exit-if-needed || true
+        continue-on-error: true
+
+  # Job 2: Run all tests with coverage
+  test:
+    name: Test & Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: ./.github/actions/setup-flutter
+        with:
+          flutter-version: '3.16.5'
+      
+      - name: Run tests
+        uses: ./.github/actions/run-tests
+        with:
+          coverage-threshold: '80'
+      
+      - name: Upload coverage summary
+        run: |
+          chmod +x .github/scripts/upload-coverage.sh
+          .github/scripts/upload-coverage.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GENERATE_HTML: 'false'
+      
+      - name: Upload coverage to Codecov (optional)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/lcov.info
+          fail_ci_if_error: false
+        continue-on-error: true
+
+  # Job 3: Build Android (debug on PRs, release on main)
+  build-android:
+    name: Build Android
+    runs-on: ubuntu-latest
+    needs: [lint, test]  # Only build if lint and tests pass
+    timeout-minutes: 20
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Needed for build number calculation
+      
+      - name: Setup Flutter
+        uses: ./.github/actions/setup-flutter
+        with:
+          flutter-version: '3.16.5'
+      
+      - name: Increment build number
+        id: version
+        run: |
+          chmod +x .github/scripts/increment-build-number.sh
+          .github/scripts/increment-build-number.sh
+      
+      - name: Build debug APK
+        if: github.event_name == 'pull_request'
+        uses: ./.github/actions/build-mobile
+        with:
+          platform: 'android'
+          build-type: 'debug'
+      
+      - name: Verify secrets (release builds only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          chmod +x .github/scripts/verify-secrets.sh
+          .github/scripts/verify-secrets.sh
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      
+      - name: Setup Android signing (release builds only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          chmod +x .github/scripts/setup-android.sh
+          .github/scripts/setup-android.sh
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      
+      - name: Build release APK + AAB
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: ./.github/actions/build-mobile
+        with:
+          platform: 'android'
+          build-type: 'release'
+      
+      - name: Build summary
+        if: always()
+        run: |
+          echo "### 📱 Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ steps.version.outputs.full_version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Build Number:** ${{ steps.version.outputs.build_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Build Type:** ${{ github.event_name == 'pull_request' && 'debug' || 'release' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Platform:** Android" >> $GITHUB_STEP_SUMMARY

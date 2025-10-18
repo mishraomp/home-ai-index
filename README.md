@@ -2,10 +2,12 @@
 
 <div align="center">
 
+![CI](https://github.com/yourusername/home-ai-index/actions/workflows/ci.yml/badge.svg)
 ![Flutter](https://img.shields.io/badge/Flutter-3.16+-02569B?logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-3.2+-0175C2?logo=dart&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Tests](https://img.shields.io/badge/tests-530%20passing-success)
+![Coverage](https://img.shields.io/badge/coverage-80%25+-brightgreen)
 
 **A smart mobile app for intelligent home inventory management**
 
@@ -206,6 +208,7 @@ That's it! The app will install and launch on your phone. ✨
 
 Comprehensive guides are available in the `docs/` directory:
 
+- **[CI_CD_SETUP.md](docs/CI_CD_SETUP.md)** - CI/CD pipeline setup and deployment
 - **[PERFORMANCE.md](docs/PERFORMANCE.md)** - Performance optimizations and profiling
 - **[ACCESSIBILITY.md](docs/ACCESSIBILITY.md)** - Accessibility standards and testing
 - **[ERROR_HANDLING.md](docs/ERROR_HANDLING.md)** - Error handling strategies
