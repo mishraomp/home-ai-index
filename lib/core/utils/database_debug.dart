@@ -41,22 +41,30 @@ void main() async {
   }).toList();
 
   if (invalidItems.isEmpty) {
-    developer.log('✓ All items have valid IDs and names\n',
-        name: 'DatabaseDebug');
+    developer.log(
+      '✓ All items have valid IDs and names\n',
+      name: 'DatabaseDebug',
+    );
   } else {
-    developer.log('⚠ Found ${invalidItems.length} items with invalid data:',
-        name: 'DatabaseDebug');
+    developer.log(
+      '⚠ Found ${invalidItems.length} items with invalid data:',
+      name: 'DatabaseDebug',
+    );
     for (final item in invalidItems) {
-      developer.log('  - ID: "${item['id']}", Name: "${item['name']}"',
-          name: 'DatabaseDebug');
+      developer.log(
+        '  - ID: "${item['id']}", Name: "${item['name']}"',
+        name: 'DatabaseDebug',
+      );
     }
     developer.log('', name: 'DatabaseDebug');
   }
 
   // Offer to clean up invalid items
   if (invalidItems.isNotEmpty) {
-    developer.log('Would you like to delete these invalid items? (y/n)',
-        name: 'DatabaseDebug');
+    developer.log(
+      'Would you like to delete these invalid items? (y/n)',
+      name: 'DatabaseDebug',
+    );
     // In a real app, you'd use a button or confirmation dialog
     // For now, uncomment the next line to auto-delete:
     // await cleanupInvalidItems(db, invalidItems);
@@ -82,14 +90,18 @@ Future<void> cleanupInvalidItems(
     }
   }
 
-  developer.log('Cleanup complete. Deleted $deleted items.\n',
-      name: 'DatabaseDebug');
+  developer.log(
+    'Cleanup complete. Deleted $deleted items.\n',
+    name: 'DatabaseDebug',
+  );
 }
 
 /// Delete ALL items (use with caution!)
 Future<void> deleteAllItems(Database db) async {
-  developer.log('\n⚠ WARNING: Deleting ALL items from database...',
-      name: 'DatabaseDebug');
+  developer.log(
+    '\n⚠ WARNING: Deleting ALL items from database...',
+    name: 'DatabaseDebug',
+  );
   await db.delete('items');
   developer.log('All items deleted.\n', name: 'DatabaseDebug');
 }

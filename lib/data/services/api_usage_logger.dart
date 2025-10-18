@@ -127,7 +127,10 @@ class APIUsageLogger {
 
     final logs = await getLogsByDateRange(start: startOfMonth, end: endOfMonth);
 
-    developer.log('Total logs returned: ${logs.length}', name: 'ApiUsageLogger');
+    developer.log(
+      'Total logs returned: ${logs.length}',
+      name: 'ApiUsageLogger',
+    );
     if (logs.isNotEmpty) {
       developer.log('First log: ${logs.first}', name: 'ApiUsageLogger');
       developer.log('Last log: ${logs.last}', name: 'ApiUsageLogger');

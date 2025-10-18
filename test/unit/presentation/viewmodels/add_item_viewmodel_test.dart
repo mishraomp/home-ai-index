@@ -33,14 +33,14 @@ void main() {
     // Mock FlutterSecureStorage
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
-      const MethodChannel('plugins.it_nomads.com/flutter_secure_storage'),
-      (MethodCall methodCall) async {
-        if (methodCall.method == 'read') {
-          return null; // Return null for all read operations (no credentials stored)
-        }
-        return null;
-      },
-    );
+          const MethodChannel('plugins.it_nomads.com/flutter_secure_storage'),
+          (MethodCall methodCall) async {
+            if (methodCall.method == 'read') {
+              return null; // Return null for all read operations (no credentials stored)
+            }
+            return null;
+          },
+        );
   });
 
   group('AddItemViewModel', () {
