@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:home_ai_index/data/services/api_quota_manager.dart';
 import 'package:home_ai_index/presentation/viewmodels/settings_viewmodel.dart';
-import 'package:home_ai_index/presentation/widgets/quota_warning_dialog.dart';
 import 'package:provider/provider.dart';
 
 /// Settings screen for managing API credentials.
@@ -471,7 +470,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Row(
           children: [
             CircleAvatar(
-              backgroundColor: color.withOpacity(0.1),
+              backgroundColor: color.withValues(alpha: 0.1),
               child: Icon(icon, color: color),
             ),
             const SizedBox(width: 16),

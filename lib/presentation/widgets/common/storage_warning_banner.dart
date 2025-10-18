@@ -51,6 +51,7 @@ class StorageWarningBanner extends StatelessWidget {
   Future<bool> _hasEnoughStorage() async {
     try {
       final appDir = await getApplicationDocumentsDirectory();
+      // ignore: avoid_slow_async_io
       final dirStat = await appDir.stat();
 
       // Estimate available storage by checking directory size
@@ -71,6 +72,7 @@ class StorageWarningBanner extends StatelessWidget {
   static Future<bool> checkStorageStatus() async {
     try {
       final appDir = await getApplicationDocumentsDirectory();
+      // ignore: avoid_slow_async_io
       final dirStat = await appDir.stat();
       const minStorageBytes = 100 * 1024 * 1024; // 100 MB
       return dirStat.size < minStorageBytes * 10;

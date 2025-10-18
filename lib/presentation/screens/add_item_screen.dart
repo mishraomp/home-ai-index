@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -65,8 +66,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
               if (mounted) {
                 // Reload fresh data from database when returning
                 viewModel.reset();
-                viewModel.loadCategories();
-                viewModel.refreshCredentialsStatus();
+                unawaited(viewModel.loadCategories());
+                unawaited(viewModel.refreshCredentialsStatus());
 
                 // Clear text controllers
                 _nameController.clear();
@@ -92,7 +93,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
                 if (mounted) {
                   if (shouldProceed) {
-                    viewModel.confirmQuotaAndRecognize();
+                    unawaited(viewModel.confirmQuotaAndRecognize());
                   } else {
                     viewModel.cancelQuotaWarning();
                   }
