@@ -1,6 +1,5 @@
 /// Represents a logged API call for monitoring and debugging
 class APILogEntry {
-
   /// Create from database map
   factory APILogEntry.fromDatabase(Map<String, dynamic> map) {
     return APILogEntry(

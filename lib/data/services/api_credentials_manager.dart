@@ -6,7 +6,6 @@ import 'package:home_ai_index/data/models/api_credentials.dart';
 /// Uses flutter_secure_storage to securely store API keys on device.
 /// For development, can optionally fall back to environment variables.
 class APICredentialsManager {
-
   APICredentialsManager({FlutterSecureStorage? storage})
     : _storage = storage ?? const FlutterSecureStorage();
   final FlutterSecureStorage _storage;

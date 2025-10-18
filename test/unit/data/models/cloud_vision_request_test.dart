@@ -16,9 +16,7 @@ void main() {
     group('toJson', () {
       test('should create valid JSON structure', () {
         // Arrange
-        final request = CloudVisionRequest(
-          imageBytes: testImageBytes,
-        );
+        final request = CloudVisionRequest(imageBytes: testImageBytes);
 
         // Act
         final json = request.toJson();
@@ -31,9 +29,7 @@ void main() {
 
       test('should base64 encode image bytes', () {
         // Arrange
-        final request = CloudVisionRequest(
-          imageBytes: testImageBytes,
-        );
+        final request = CloudVisionRequest(imageBytes: testImageBytes);
 
         // Act
         final json = request.toJson();
@@ -47,9 +43,7 @@ void main() {
 
       test('should include LABEL_DETECTION feature', () {
         // Arrange
-        final request = CloudVisionRequest(
-          imageBytes: testImageBytes,
-        );
+        final request = CloudVisionRequest(imageBytes: testImageBytes);
 
         // Act
         final json = request.toJson();
@@ -79,9 +73,7 @@ void main() {
 
       test('should include language hints', () {
         // Arrange
-        final request = CloudVisionRequest(
-          imageBytes: testImageBytes,
-        );
+        final request = CloudVisionRequest(imageBytes: testImageBytes);
 
         // Act
         final json = request.toJson();
@@ -110,9 +102,7 @@ void main() {
     group('validate', () {
       test('should pass validation for valid request', () {
         // Arrange
-        final request = CloudVisionRequest(
-          imageBytes: testImageBytes,
-        );
+        final request = CloudVisionRequest(imageBytes: testImageBytes);
 
         // Act & Assert
         expect(() => request.validate(), returnsNormally);
@@ -120,9 +110,7 @@ void main() {
 
       test('should throw ArgumentError for empty image bytes', () {
         // Arrange
-        final request = CloudVisionRequest(
-          imageBytes: Uint8List(0),
-        );
+        final request = CloudVisionRequest(imageBytes: Uint8List(0));
 
         // Act & Assert
         expect(
@@ -140,9 +128,7 @@ void main() {
       test('should throw ArgumentError for image exceeding 20MB', () {
         // Arrange - Create 21MB image
         final largeImage = Uint8List(21 * 1024 * 1024);
-        final request = CloudVisionRequest(
-          imageBytes: largeImage,
-        );
+        final request = CloudVisionRequest(imageBytes: largeImage);
 
         // Act & Assert
         expect(
@@ -223,9 +209,7 @@ void main() {
     group('toString', () {
       test('should include image size and maxResults', () {
         // Arrange
-        final request = CloudVisionRequest(
-          imageBytes: testImageBytes,
-        );
+        final request = CloudVisionRequest(imageBytes: testImageBytes);
 
         // Act
         final result = request.toString();
@@ -239,12 +223,8 @@ void main() {
     group('equality', () {
       test('should be equal for same image bytes and maxResults', () {
         // Arrange
-        final request1 = CloudVisionRequest(
-          imageBytes: testImageBytes,
-        );
-        final request2 = CloudVisionRequest(
-          imageBytes: testImageBytes,
-        );
+        final request1 = CloudVisionRequest(imageBytes: testImageBytes);
+        final request2 = CloudVisionRequest(imageBytes: testImageBytes);
 
         // Act & Assert
         expect(request1, equals(request2));
@@ -254,12 +234,8 @@ void main() {
       test('should not be equal for different image bytes', () {
         // Arrange
         final differentBytes = Uint8List.fromList([1, 2, 3]);
-        final request1 = CloudVisionRequest(
-          imageBytes: testImageBytes,
-        );
-        final request2 = CloudVisionRequest(
-          imageBytes: differentBytes,
-        );
+        final request1 = CloudVisionRequest(imageBytes: testImageBytes);
+        final request2 = CloudVisionRequest(imageBytes: differentBytes);
 
         // Act & Assert
         expect(request1, isNot(equals(request2)));
@@ -267,9 +243,7 @@ void main() {
 
       test('should not be equal for different maxResults', () {
         // Arrange
-        final request1 = CloudVisionRequest(
-          imageBytes: testImageBytes,
-        );
+        final request1 = CloudVisionRequest(imageBytes: testImageBytes);
         final request2 = CloudVisionRequest(
           imageBytes: testImageBytes,
           maxResults: 15,

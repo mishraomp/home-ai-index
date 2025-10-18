@@ -1,5 +1,10 @@
-
-import 'package:home_ai_index/core/exceptions.dart' show NetworkException, AuthenticationException, QuotaExceededException, ApiException, TimeoutException;
+import 'package:home_ai_index/core/exceptions.dart'
+    show
+        NetworkException,
+        AuthenticationException,
+        QuotaExceededException,
+        ApiException,
+        TimeoutException;
 import 'package:home_ai_index/data/models/api_credentials.dart';
 import 'package:home_ai_index/data/models/cloud_vision_request.dart';
 import 'package:home_ai_index/data/models/cloud_vision_response.dart';

@@ -269,9 +269,7 @@ void main() {
             ),
           ).thenAnswer((_) async => [testItem.toDatabase()]);
 
-          final result = await repository.getItems(
-            locationId: 'pantry',
-          );
+          final result = await repository.getItems(locationId: 'pantry');
 
           expect(result, hasLength(1));
           verify(
@@ -320,9 +318,7 @@ void main() {
             ],
           );
 
-          final result = await repository.getItems(
-            includeUnlocated: true,
-          );
+          final result = await repository.getItems(includeUnlocated: true);
 
           expect(result, hasLength(2));
           // Check that all items have null locationId

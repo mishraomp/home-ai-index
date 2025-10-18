@@ -166,10 +166,7 @@ void main() {
                   icon: Icons.restaurant,
                   isCompact: true,
                 ),
-                CategoryBadge(
-                  categoryName: 'Electronics',
-                  icon: Icons.laptop,
-                ),
+                CategoryBadge(categoryName: 'Electronics', icon: Icons.laptop),
               ],
             ),
           ),

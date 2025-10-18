@@ -177,9 +177,7 @@ class SkeletonListItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ShimmerLoading(
-                  width: MediaQuery.of(context).size.width * 0.6,
-                ),
+                ShimmerLoading(width: MediaQuery.of(context).size.width * 0.6),
                 const SizedBox(height: 8),
                 ShimmerLoading(
                   width: MediaQuery.of(context).size.width * 0.4,

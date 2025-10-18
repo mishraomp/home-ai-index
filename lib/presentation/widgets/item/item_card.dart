@@ -30,9 +30,7 @@ class ItemCard extends StatelessWidget {
   /// Build expiration date badge with appropriate color
   Widget _buildExpirationBadge(BuildContext context, DateTime expirationDate) {
     final isExpired = ExpirationDateUtils.isExpired(expirationDate);
-    final isExpiringSoon = ExpirationDateUtils.isExpiringSoon(
-      expirationDate,
-    );
+    final isExpiringSoon = ExpirationDateUtils.isExpiringSoon(expirationDate);
 
     Color backgroundColor;
     Color foregroundColor;

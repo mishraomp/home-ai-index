@@ -89,9 +89,7 @@ void main() {
     testWidgets('hides sublocation indicator when hasChildren is false', (
       WidgetTester tester,
     ) async {
-      await tester.pumpWidget(
-        createTestWidget(location: testLocation),
-      );
+      await tester.pumpWidget(createTestWidget(location: testLocation));
 
       expect(find.text('Has sublocations'), findsNothing);
     });

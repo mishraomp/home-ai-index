@@ -83,9 +83,7 @@ class ImageRepositoryImpl implements ImageRepository {
       // Iteratively reduce quality if still over max size
       while (compressed.length > maxImageSizeBytes && quality > 50) {
         quality -= 10;
-        compressed = Uint8List.fromList(
-          img.encodeJpg(image, quality: quality),
-        );
+        compressed = Uint8List.fromList(img.encodeJpg(image, quality: quality));
       }
 
       // If still too large, resize the image
