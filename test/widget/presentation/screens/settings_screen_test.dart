@@ -22,18 +22,20 @@ void main() {
     setUp(() {
       mockCredentialsManager = MockAPICredentialsManager();
       mockQuotaManager = MockAPIQuotaManager();
-      
+
       // Stub checkQuota to return a default QuotaStatus
-      when(mockQuotaManager.checkQuota()).thenAnswer((_) async => const QuotaStatus(
-        currentUsage: 0,
-        freeLimit: 1000,
-        warningThreshold: 800,
-        criticalThreshold: 950,
-        remainingFreeUnits: 1000,
-        isInFreeTier: true,
-        hasExceededLimit: false,
-        estimatedMonthlyCost: 0.0,
-      ));
+      when(mockQuotaManager.checkQuota()).thenAnswer(
+        (_) async => const QuotaStatus(
+          currentUsage: 0,
+          freeLimit: 1000,
+          warningThreshold: 800,
+          criticalThreshold: 950,
+          remainingFreeUnits: 1000,
+          isInFreeTier: true,
+          hasExceededLimit: false,
+          estimatedMonthlyCost: 0.0,
+        ),
+      );
     });
 
     Widget createSettingsScreen({SettingsViewModel? viewModel}) {
@@ -209,18 +211,20 @@ void main() {
     setUp(() {
       mockCredentialsManager = MockAPICredentialsManager();
       mockQuotaManager = MockAPIQuotaManager();
-      
+
       // Stub checkQuota to return a default QuotaStatus
-      when(mockQuotaManager.checkQuota()).thenAnswer((_) async => const QuotaStatus(
-        currentUsage: 0,
-        freeLimit: 1000,
-        warningThreshold: 800,
-        criticalThreshold: 950,
-        remainingFreeUnits: 1000,
-        isInFreeTier: true,
-        hasExceededLimit: false,
-        estimatedMonthlyCost: 0.0,
-      ));
+      when(mockQuotaManager.checkQuota()).thenAnswer(
+        (_) async => const QuotaStatus(
+          currentUsage: 0,
+          freeLimit: 1000,
+          warningThreshold: 800,
+          criticalThreshold: 950,
+          remainingFreeUnits: 1000,
+          isInFreeTier: true,
+          hasExceededLimit: false,
+          estimatedMonthlyCost: 0.0,
+        ),
+      );
     });
 
     Widget createSettingsScreen() {

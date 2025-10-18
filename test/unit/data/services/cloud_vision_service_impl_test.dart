@@ -600,30 +600,34 @@ void main() {
     });
 
     group('recognizeImage - timeout handling', () {
-      test('should use configured timeout', () async {
-        // Arrange
-        final request = CloudVisionRequest(
-          imageBytes: Uint8List.fromList([1, 2, 3]),
-        );
+      test(
+        'should use configured timeout',
+        () async {
+          // Arrange
+          final request = CloudVisionRequest(
+            imageBytes: Uint8List.fromList([1, 2, 3]),
+          );
 
-        when(
-          mockClient.post(
-            any,
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
-          ),
-        ).thenAnswer((_) async {
-          // Delay longer than the API timeout (10 seconds)
-          await Future.delayed(const Duration(seconds: 15));
-          return http.Response('Too late', 200);
-        });
+          when(
+            mockClient.post(
+              any,
+              headers: anyNamed('headers'),
+              body: anyNamed('body'),
+            ),
+          ).thenAnswer((_) async {
+            // Delay longer than the API timeout (10 seconds)
+            await Future.delayed(const Duration(seconds: 15));
+            return http.Response('Too late', 200);
+          });
 
-        // Act & Assert
-        await expectLater(
-          service.recognizeImage(request, credentials),
-          throwsA(isA<TimeoutException>()),
-        );
-      }, timeout: const Timeout(Duration(seconds: 12))); // Test timeout slightly longer than API timeout
+          // Act & Assert
+          await expectLater(
+            service.recognizeImage(request, credentials),
+            throwsA(isA<TimeoutException>()),
+          );
+        },
+        timeout: const Timeout(Duration(seconds: 12)),
+      ); // Test timeout slightly longer than API timeout
     });
   });
 }
