@@ -1,0 +1,107 @@
+name: 'Build Mobile'
+description: 'Build Android or iOS application'
+inputs:
+  platform:
+    description: 'Platform to build (android or ios)'
+    required: true
+  build-type:
+    description: 'Build type (debug or release)'
+    required: true
+  upload-artifact:
+    description: 'Upload build artifact'
+    required: false
+    default: 'true'
+outputs:
+  artifact-name:
+    description: 'Name of uploaded artifact'
+    value: ${{ steps.upload.outputs.artifact-name }}
+  build-path:
+    description: 'Path to built artifact'
+    value: ${{ steps.build.outputs.path }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate inputs
+      shell: bash
+      run: |
+        if [[ "${{ inputs.platform }}" != "android" ]]; then
+          echo "❌ Error: Only 'android' platform is supported in Phase 1"
+          echo "iOS support will be added in future phases"
+          exit 1
+        fi
+        
+        if [[ "${{ inputs.build-type }}" != "debug" && "${{ inputs.build-type }}" != "release" ]]; then
+          echo "❌ Error: build-type must be 'debug' or 'release'"
+          exit 1
+        fi
+
+    - name: Setup Java JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        cache: 'gradle'
+
+    - name: Build Android APK (Debug)
+      if: inputs.platform == 'android' && inputs.build-type == 'debug'
+      id: build-debug
+      shell: bash
+      run: |
+        flutter build apk --debug
+        echo "path=build/app/outputs/flutter-apk/app-debug.apk" >> $GITHUB_OUTPUT
+
+    - name: Build Android APK (Release)
+      if: inputs.platform == 'android' && inputs.build-type == 'release'
+      id: build-release-apk
+      shell: bash
+      run: |
+        flutter build apk --release
+        echo "path=build/app/outputs/flutter-apk/app-release.apk" >> $GITHUB_OUTPUT
+
+    - name: Build Android App Bundle (Release)
+      if: inputs.platform == 'android' && inputs.build-type == 'release'
+      id: build-release-aab
+      shell: bash
+      run: |
+        flutter build appbundle --release
+
+    - name: Set build output path
+      id: build
+      shell: bash
+      run: |
+        if [[ "${{ inputs.build-type }}" == "debug" ]]; then
+          echo "path=${{ steps.build-debug.outputs.path }}" >> $GITHUB_OUTPUT
+        else
+          echo "path=${{ steps.build-release-apk.outputs.path }}" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Upload APK artifact
+      if: inputs.upload-artifact == 'true' && inputs.build-type == 'debug'
+      id: upload-debug
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-debug-apk
+        path: build/app/outputs/flutter-apk/app-debug.apk
+        retention-days: 7
+
+    - name: Upload Release artifacts
+      if: inputs.upload-artifact == 'true' && inputs.build-type == 'release'
+      id: upload-release
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-release
+        path: |
+          build/app/outputs/flutter-apk/app-release.apk
+          build/app/outputs/bundle/release/app-release.aab
+        retention-days: 30
+
+    - name: Set artifact name output
+      id: upload
+      shell: bash
+      run: |
+        if [[ "${{ inputs.build-type }}" == "debug" ]]; then
+          echo "artifact-name=android-debug-apk" >> $GITHUB_OUTPUT
+        else
+          echo "artifact-name=android-release" >> $GITHUB_OUTPUT
+        fi

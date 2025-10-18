@@ -252,9 +252,7 @@ void main() {
         ).thenAnswer((_) async => 5);
 
         // Act
-        final result = await repository.pruneHistoryForItem(
-          'item1',
-        );
+        final result = await repository.pruneHistoryForItem('item1');
 
         // Assert
         expect(result, 5); // 5 entries deleted
@@ -284,9 +282,7 @@ void main() {
         ).thenAnswer((_) async => entries);
 
         // Act
-        final result = await repository.pruneHistoryForItem(
-          'item1',
-        );
+        final result = await repository.pruneHistoryForItem('item1');
 
         // Assert
         expect(result, 0); // No entries deleted

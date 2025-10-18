@@ -1,11 +1,13 @@
 ﻿# home-ai-index Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2025-10-16
+Auto-generated from all feature plans. Last updated: 2025-10-18
 
 ## Active Technologies
-- Dart 3.2+ / Flutter 3.16+ (001-build-a-mobile)
+- Dart 3.9+ / Flutter 3.35+ (001-build-a-mobile)
 - Google Cloud Vision API, http ^1.1.0, flutter_secure_storage ^9.0.0, connectivity_plus ^5.0.0 (002-upgrade-the-existing)
 - Provider state management, image ^4.0.17, sqflite ^2.3.0 (existing)
+- Dart 3.9+ / Flutter 3.35+ + GitHub Actions, Fastlane, flutter_lints 6.0.0, lcov (coverage) (003-create-ci-cd)
+- GitHub Artifacts (build outputs, test reports, coverage), GitHub Packages (optional Docker images for custom runners) (003-create-ci-cd)
 
 ## Project Structure
 ```
@@ -31,7 +33,7 @@ flutter build ios        # Build iOS app
 ```
 
 ## Code Style
-Dart 3.2+ / Flutter 3.16+: Follow standard conventions
+Dart 3.9+ / Flutter 3.35+: Follow standard conventions
 
 ### Flutter Best Practices (CRITICAL)
 **ALWAYS follow these rules - NO EXCEPTIONS:**
@@ -60,8 +62,9 @@ Dart 3.2+ / Flutter 3.16+: Follow standard conventions
    - Follow Material Design 3 guidelines for UI components
 
 ## Recent Changes
+- 003-create-ci-cd: Added Dart 3.9+ / Flutter 3.35+ + GitHub Actions, Fastlane, flutter_lints 6.0.0, lcov (coverage)
 - 002-upgrade-the-existing: Added Google Cloud Vision API integration (http, flutter_secure_storage, connectivity_plus)
-- 001-build-a-mobile: Added Dart 3.2+ / Flutter 3.16+
+- 001-build-a-mobile: Added Dart 3.9+ / Flutter 3.35+
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->

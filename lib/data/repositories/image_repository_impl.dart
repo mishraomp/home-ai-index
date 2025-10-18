@@ -17,6 +17,7 @@ class ImageRepositoryImpl implements ImageRepository {
       final imagesDir = Directory('${directory.path}/images');
 
       // Create images directory if it doesn't exist
+      // ignore: avoid_slow_async_io
       if (!await imagesDir.exists()) {
         await imagesDir.create(recursive: true);
       }
@@ -83,9 +84,7 @@ class ImageRepositoryImpl implements ImageRepository {
       // Iteratively reduce quality if still over max size
       while (compressed.length > maxImageSizeBytes && quality > 50) {
         quality -= 10;
-        compressed = Uint8List.fromList(
-          img.encodeJpg(image, quality: quality),
-        );
+        compressed = Uint8List.fromList(img.encodeJpg(image, quality: quality));
       }
 
       // If still too large, resize the image
@@ -123,6 +122,7 @@ class ImageRepositoryImpl implements ImageRepository {
   Future<void> deleteImage(String imagePath) async {
     try {
       final file = File(imagePath);
+      // ignore: avoid_slow_async_io
       if (await file.exists()) {
         await file.delete();
       }
@@ -136,6 +136,7 @@ class ImageRepositoryImpl implements ImageRepository {
   Future<bool> imageExists(String imagePath) async {
     try {
       final file = File(imagePath);
+      // ignore: avoid_slow_async_io
       return await file.exists();
     } catch (e) {
       return false;

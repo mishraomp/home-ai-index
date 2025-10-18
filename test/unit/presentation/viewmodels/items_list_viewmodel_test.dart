@@ -173,10 +173,7 @@ void main() {
         viewModel.setItems(testItems);
 
         // Act & Assert
-        expect(
-          viewModel.getTotalPages(),
-          3,
-        ); // 50 items / 20 per page
+        expect(viewModel.getTotalPages(), 3); // 50 items / 20 per page
         expect(
           viewModel.getTotalPages(pageSize: 10),
           5,

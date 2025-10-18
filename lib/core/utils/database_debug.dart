@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:home_ai_index/data/datasources/local/database_helper.dart';
 import 'package:sqflite/sqflite.dart';
@@ -8,30 +10,30 @@ import 'package:sqflite/sqflite.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  print('=== Database Debug Utility ===\n');
+  developer.log('=== Database Debug Utility ===\n', name: 'DatabaseDebug');
 
   final dbHelper = DatabaseHelper.instance;
   final db = await dbHelper.database;
 
   // Query all items
-  print('--- All Items in Database ---');
+  developer.log('--- All Items in Database ---', name: 'DatabaseDebug');
   final items = await db.query('items');
-  print('Total items: ${items.length}\n');
+  developer.log('Total items: ${items.length}\n', name: 'DatabaseDebug');
 
   for (var i = 0; i < items.length; i++) {
     final item = items[i];
-    print('Item ${i + 1}:');
-    print('  ID: ${item['id']}');
-    print('  Name: ${item['name']}');
-    print('  Category: ${item['category_id']}');
-    print('  Location: ${item['location_id']}');
-    print('  Quantity: ${item['quantity']}');
-    print('  Added: ${item['added_at']}');
-    print('');
+    developer.log('Item ${i + 1}:', name: 'DatabaseDebug');
+    developer.log('  ID: ${item['id']}', name: 'DatabaseDebug');
+    developer.log('  Name: ${item['name']}', name: 'DatabaseDebug');
+    developer.log('  Category: ${item['category_id']}', name: 'DatabaseDebug');
+    developer.log('  Location: ${item['location_id']}', name: 'DatabaseDebug');
+    developer.log('  Quantity: ${item['quantity']}', name: 'DatabaseDebug');
+    developer.log('  Added: ${item['added_at']}', name: 'DatabaseDebug');
+    developer.log('', name: 'DatabaseDebug');
   }
 
   // Check for items with invalid data
-  print('--- Checking for Invalid Items ---');
+  developer.log('--- Checking for Invalid Items ---', name: 'DatabaseDebug');
   final invalidItems = items.where((item) {
     final id = item['id'] as String?;
     final name = item['name'] as String?;
@@ -39,24 +41,36 @@ void main() async {
   }).toList();
 
   if (invalidItems.isEmpty) {
-    print('✓ All items have valid IDs and names\n');
+    developer.log(
+      '✓ All items have valid IDs and names\n',
+      name: 'DatabaseDebug',
+    );
   } else {
-    print('⚠ Found ${invalidItems.length} items with invalid data:');
+    developer.log(
+      '⚠ Found ${invalidItems.length} items with invalid data:',
+      name: 'DatabaseDebug',
+    );
     for (final item in invalidItems) {
-      print('  - ID: "${item['id']}", Name: "${item['name']}"');
+      developer.log(
+        '  - ID: "${item['id']}", Name: "${item['name']}"',
+        name: 'DatabaseDebug',
+      );
     }
-    print('');
+    developer.log('', name: 'DatabaseDebug');
   }
 
   // Offer to clean up invalid items
   if (invalidItems.isNotEmpty) {
-    print('Would you like to delete these invalid items? (y/n)');
+    developer.log(
+      'Would you like to delete these invalid items? (y/n)',
+      name: 'DatabaseDebug',
+    );
     // In a real app, you'd use a button or confirmation dialog
     // For now, uncomment the next line to auto-delete:
     // await cleanupInvalidItems(db, invalidItems);
   }
 
-  print('=== End of Database Debug ===');
+  developer.log('=== End of Database Debug ===', name: 'DatabaseDebug');
 }
 
 /// Delete invalid items from database
@@ -64,7 +78,7 @@ Future<void> cleanupInvalidItems(
   Database db,
   List<Map<String, dynamic>> items,
 ) async {
-  print('\nCleaning up invalid items...');
+  developer.log('\nCleaning up invalid items...', name: 'DatabaseDebug');
   int deleted = 0;
 
   for (final item in items) {
@@ -72,27 +86,33 @@ Future<void> cleanupInvalidItems(
     if (id != null && id.isNotEmpty) {
       await db.delete('items', where: 'id = ?', whereArgs: [id]);
       deleted++;
-      print('  ✓ Deleted item with ID: $id');
+      developer.log('  ✓ Deleted item with ID: $id', name: 'DatabaseDebug');
     }
   }
 
-  print('Cleanup complete. Deleted $deleted items.\n');
+  developer.log(
+    'Cleanup complete. Deleted $deleted items.\n',
+    name: 'DatabaseDebug',
+  );
 }
 
 /// Delete ALL items (use with caution!)
 Future<void> deleteAllItems(Database db) async {
-  print('\n⚠ WARNING: Deleting ALL items from database...');
+  developer.log(
+    '\n⚠ WARNING: Deleting ALL items from database...',
+    name: 'DatabaseDebug',
+  );
   await db.delete('items');
-  print('All items deleted.\n');
+  developer.log('All items deleted.\n', name: 'DatabaseDebug');
 }
 
 /// Delete specific item by ID
 Future<void> deleteItemById(Database db, String id) async {
-  print('\nDeleting item with ID: $id...');
+  developer.log('\nDeleting item with ID: $id...', name: 'DatabaseDebug');
   final count = await db.delete('items', where: 'id = ?', whereArgs: [id]);
   if (count > 0) {
-    print('✓ Item deleted successfully.\n');
+    developer.log('✓ Item deleted successfully.\n', name: 'DatabaseDebug');
   } else {
-    print('✗ No item found with that ID.\n');
+    developer.log('✗ No item found with that ID.\n', name: 'DatabaseDebug');
   }
 }

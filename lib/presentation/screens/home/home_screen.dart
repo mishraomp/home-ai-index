@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:home_ai_index/data/models/category.dart';
@@ -235,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
         // Exit selection mode and reload data
         _exitSelectionMode();
-        _loadData();
+        unawaited(_loadData());
       }
     }
   }

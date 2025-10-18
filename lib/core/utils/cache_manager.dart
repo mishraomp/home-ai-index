@@ -73,9 +73,7 @@ class CacheManager {
         .map((entry) => entry.key)
         .toList();
 
-    for (final key in expiredKeys) {
-      remove(key);
-    }
+    expiredKeys.forEach(remove);
   }
 
   /// Get cache statistics

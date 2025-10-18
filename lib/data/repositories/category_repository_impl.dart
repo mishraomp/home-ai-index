@@ -5,7 +5,6 @@ import 'package:home_ai_index/data/repositories/category_repository.dart';
 
 /// Implementation of CategoryRepository using SQLite
 class CategoryRepositoryImpl implements CategoryRepository {
-
   CategoryRepositoryImpl(this._databaseHelper);
   final DatabaseHelper _databaseHelper;
 
@@ -13,10 +12,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
   Future<List<Category>> getCategories() async {
     try {
       final db = await _databaseHelper.database;
-      final results = await db.query(
-        'categories',
-        orderBy: 'name ASC',
-      );
+      final results = await db.query('categories', orderBy: 'name ASC');
 
       return results.map((map) => Category.fromDatabase(map)).toList();
     } catch (e) {
@@ -68,7 +64,8 @@ class CategoryRepositoryImpl implements CategoryRepository {
 
       if (rowsAffected == 0) {
         throw CategoryNotFoundException(
-            'Category with id ${category.id} not found');
+          'Category with id ${category.id} not found',
+        );
       }
     } catch (e) {
       if (e is CategoryNotFoundException) rethrow;

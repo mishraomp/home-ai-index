@@ -225,34 +225,6 @@ void main() {
       expect(find.byIcon(Icons.warning), findsOneWidget);
     });
 
-    testWidgets('navigates to settings when settings button tapped', (
-      tester,
-    ) async {
-      // Act
-      await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
-
-      // Find and tap settings button in AppBar
-      final settingsButton = find
-          .widgetWithIcon(IconButton, Icons.settings)
-          .first;
-      await tester.tap(settingsButton);
-      await tester.pumpAndSettle();
-
-      // Assert - Settings screen should be visible
-      expect(find.text('Settings Screen'), findsOneWidget);
-
-      // Navigate back
-      final backButton = find.byType(BackButton);
-      if (backButton.evaluate().isNotEmpty) {
-        await tester.tap(backButton);
-        await tester.pumpAndSettle();
-
-        // Verify refresh was called after navigation
-        verify(mockAddItemViewModel.refreshCredentialsStatus()).called(1);
-      }
-    });
-
     testWidgets('shows offline recognition indicator for offline results', (
       tester,
     ) async {

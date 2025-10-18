@@ -427,10 +427,7 @@ void main() {
     group('updateLocation', () {
       test('should update location successfully', () async {
         // Arrange
-        const location = Location(
-          id: '1',
-          name: 'Updated Kitchen',
-        );
+        const location = Location(id: '1', name: 'Updated Kitchen');
 
         // Mock location exists
         when(
@@ -467,10 +464,7 @@ void main() {
 
       test('should throw LocationNotFoundException when not found', () async {
         // Arrange
-        const location = Location(
-          id: 'nonexistent',
-          name: 'Test',
-        );
+        const location = Location(id: 'nonexistent', name: 'Test');
         when(
           mockDatabase.query(
             'locations',

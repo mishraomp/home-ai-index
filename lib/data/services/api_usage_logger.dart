@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer' as developer;
 
 import 'package:home_ai_index/data/datasources/local/database_helper.dart';
 import 'package:home_ai_index/data/models/api_log_entry.dart';
@@ -119,17 +120,20 @@ class APIUsageLogger {
     final endOfMonth = DateTime(now.year, now.month + 1);
 
     // Debug logging
-    print('🔍 API USAGE LOGGER - getMonthLogs():');
-    print('   Current time: $now');
-    print('   Start of month: $startOfMonth');
-    print('   End of month: $endOfMonth');
+    developer.log('API USAGE LOGGER - getMonthLogs():', name: 'ApiUsageLogger');
+    developer.log('Current time: $now', name: 'ApiUsageLogger');
+    developer.log('Start of month: $startOfMonth', name: 'ApiUsageLogger');
+    developer.log('End of month: $endOfMonth', name: 'ApiUsageLogger');
 
     final logs = await getLogsByDateRange(start: startOfMonth, end: endOfMonth);
 
-    print('   Total logs returned: ${logs.length}');
+    developer.log(
+      'Total logs returned: ${logs.length}',
+      name: 'ApiUsageLogger',
+    );
     if (logs.isNotEmpty) {
-      print('   First log: ${logs.first}');
-      print('   Last log: ${logs.last}');
+      developer.log('First log: ${logs.first}', name: 'ApiUsageLogger');
+      developer.log('Last log: ${logs.last}', name: 'ApiUsageLogger');
     }
 
     return logs;

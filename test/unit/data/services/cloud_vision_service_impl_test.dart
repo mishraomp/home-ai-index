@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -600,31 +601,33 @@ void main() {
     });
 
     group('recognizeImage - timeout handling', () {
-      test('should use configured timeout', () async {
-        // Arrange
-        final request = CloudVisionRequest(
-          imageBytes: Uint8List.fromList([1, 2, 3]),
-        );
+      test(
+        'should use configured timeout',
+        () async {
+          // Arrange
+          final request = CloudVisionRequest(
+            imageBytes: Uint8List.fromList([1, 2, 3]),
+          );
 
-        when(
-          mockClient.post(
-            any,
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
-          ),
-        ).thenAnswer((_) async {
-          await Future.delayed(
-            const Duration(seconds: 15),
-          ); // Longer than timeout
-          return http.Response('Too late', 200);
-        });
+          // Create a completer that we never complete to simulate hanging request
+          final completer = Completer<http.Response>();
 
-        // Act & Assert
-        expect(
-          () => service.recognizeImage(request, credentials),
-          throwsA(isA<TimeoutException>()),
-        );
-      });
+          when(
+            mockClient.post(
+              any,
+              headers: anyNamed('headers'),
+              body: anyNamed('body'),
+            ),
+          ).thenAnswer((_) => completer.future);
+
+          // Act & Assert
+          await expectLater(
+            service.recognizeImage(request, credentials),
+            throwsA(isA<TimeoutException>()),
+          );
+        },
+        timeout: const Timeout(Duration(seconds: 15)),
+      ); // Test timeout must be longer than API timeout (10s)
     });
   });
 }

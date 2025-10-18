@@ -5,7 +5,6 @@ import 'package:equatable/equatable.dart';
 /// Categories can be default (pre-populated) or custom (user-created).
 /// Each category has an icon represented by its Material Icons codePoint.
 class Category extends Equatable {
-
   const Category({
     required this.id,
     required this.name,
@@ -32,6 +31,7 @@ class Category extends Equatable {
       isCustom: (map['is_custom'] as int) == 1,
     );
   }
+
   /// Unique identifier (UUID format for custom, predefined string for defaults)
   final String id;
 

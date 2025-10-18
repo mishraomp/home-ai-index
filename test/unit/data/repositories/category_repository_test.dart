@@ -21,8 +21,7 @@ void main() {
       mockDatabase = MockDatabase();
       repository = CategoryRepositoryImpl(mockDatabaseHelper);
 
-      when(mockDatabaseHelper.database)
-          .thenAnswer((_) async => mockDatabase);
+      when(mockDatabaseHelper.database).thenAnswer((_) async => mockDatabase);
     });
 
     const testCategory = Category(
@@ -34,11 +33,14 @@ void main() {
 
     group('getCategories', () {
       test('should return all categories', () async {
-        when(mockDatabase.query('categories', orderBy: anyNamed('orderBy')))
-            .thenAnswer((_) async => [
-                  testCategory.toDatabase(),
-                  testCategory.copyWith(id: 'tools', name: 'Tools').toDatabase(),
-                ]);
+        when(
+          mockDatabase.query('categories', orderBy: anyNamed('orderBy')),
+        ).thenAnswer(
+          (_) async => [
+            testCategory.toDatabase(),
+            testCategory.copyWith(id: 'tools', name: 'Tools').toDatabase(),
+          ],
+        );
 
         final result = await repository.getCategories();
 
@@ -49,8 +51,9 @@ void main() {
       });
 
       test('should return empty list when no categories', () async {
-        when(mockDatabase.query('categories', orderBy: anyNamed('orderBy')))
-            .thenAnswer((_) async => []);
+        when(
+          mockDatabase.query('categories', orderBy: anyNamed('orderBy')),
+        ).thenAnswer((_) async => []);
 
         final result = await repository.getCategories();
 
@@ -58,8 +61,9 @@ void main() {
       });
 
       test('should throw DatabaseException on query failure', () async {
-        when(mockDatabase.query('categories', orderBy: anyNamed('orderBy')))
-            .thenThrow(Exception('Query failed'));
+        when(
+          mockDatabase.query('categories', orderBy: anyNamed('orderBy')),
+        ).thenThrow(Exception('Query failed'));
 
         expect(
           () => repository.getCategories(),
@@ -70,30 +74,36 @@ void main() {
 
     group('getCategoryById', () {
       test('should return category when found', () async {
-        when(mockDatabase.query(
-          'categories',
-          where: anyNamed('where'),
-          whereArgs: anyNamed('whereArgs'),
-        )).thenAnswer((_) async => [testCategory.toDatabase()]);
+        when(
+          mockDatabase.query(
+            'categories',
+            where: anyNamed('where'),
+            whereArgs: anyNamed('whereArgs'),
+          ),
+        ).thenAnswer((_) async => [testCategory.toDatabase()]);
 
         final result = await repository.getCategoryById('groceries');
 
         expect(result, isNotNull);
         expect(result!.id, 'groceries');
         expect(result.name, 'Groceries');
-        verify(mockDatabase.query(
-          'categories',
-          where: 'id = ?',
-          whereArgs: ['groceries'],
-        )).called(1);
+        verify(
+          mockDatabase.query(
+            'categories',
+            where: 'id = ?',
+            whereArgs: ['groceries'],
+          ),
+        ).called(1);
       });
 
       test('should return null when category not found', () async {
-        when(mockDatabase.query(
-          'categories',
-          where: anyNamed('where'),
-          whereArgs: anyNamed('whereArgs'),
-        )).thenAnswer((_) async => []);
+        when(
+          mockDatabase.query(
+            'categories',
+            where: anyNamed('where'),
+            whereArgs: anyNamed('whereArgs'),
+          ),
+        ).thenAnswer((_) async => []);
 
         final result = await repository.getCategoryById('nonexistent');
 
@@ -101,11 +111,13 @@ void main() {
       });
 
       test('should throw DatabaseException on query failure', () async {
-        when(mockDatabase.query(
-          'categories',
-          where: anyNamed('where'),
-          whereArgs: anyNamed('whereArgs'),
-        )).thenThrow(Exception('Query failed'));
+        when(
+          mockDatabase.query(
+            'categories',
+            where: anyNamed('where'),
+            whereArgs: anyNamed('whereArgs'),
+          ),
+        ).thenThrow(Exception('Query failed'));
 
         expect(
           () => repository.getCategoryById('groceries'),
@@ -123,14 +135,14 @@ void main() {
           isCustom: true,
         );
 
-        when(mockDatabase.insert('categories', any))
-            .thenAnswer((_) async => 1);
+        when(mockDatabase.insert('categories', any)).thenAnswer((_) async => 1);
 
         final result = await repository.createCategory(customCategory);
 
         expect(result, customCategory.id);
-        verify(mockDatabase.insert('categories', customCategory.toDatabase()))
-            .called(1);
+        verify(
+          mockDatabase.insert('categories', customCategory.toDatabase()),
+        ).called(1);
       });
 
       test('should throw DatabaseException on insert failure', () async {
@@ -141,8 +153,9 @@ void main() {
           isCustom: true,
         );
 
-        when(mockDatabase.insert('categories', any))
-            .thenThrow(Exception('Insert failed'));
+        when(
+          mockDatabase.insert('categories', any),
+        ).thenThrow(Exception('Insert failed'));
 
         expect(
           () => repository.createCategory(customCategory),
@@ -160,76 +173,92 @@ void main() {
           isCustom: true,
         );
 
-        when(mockDatabase.update(
-          'categories',
-          any,
-          where: anyNamed('where'),
-          whereArgs: anyNamed('whereArgs'),
-        )).thenAnswer((_) async => 1);
+        when(
+          mockDatabase.update(
+            'categories',
+            any,
+            where: anyNamed('where'),
+            whereArgs: anyNamed('whereArgs'),
+          ),
+        ).thenAnswer((_) async => 1);
 
         await repository.updateCategory(customCategory);
 
-        verify(mockDatabase.update(
-          'categories',
-          customCategory.toDatabase(),
-          where: 'id = ?',
-          whereArgs: [customCategory.id],
-        )).called(1);
+        verify(
+          mockDatabase.update(
+            'categories',
+            customCategory.toDatabase(),
+            where: 'id = ?',
+            whereArgs: [customCategory.id],
+          ),
+        ).called(1);
       });
 
-      test('should throw CategoryNotFoundException when category not found',
-          () async {
-        const customCategory = Category(
-          id: 'custom-1',
-          name: 'Updated Category',
-          iconCodePoint: 0xe000,
-          isCustom: true,
-        );
+      test(
+        'should throw CategoryNotFoundException when category not found',
+        () async {
+          const customCategory = Category(
+            id: 'custom-1',
+            name: 'Updated Category',
+            iconCodePoint: 0xe000,
+            isCustom: true,
+          );
 
-        when(mockDatabase.update(
-          'categories',
-          any,
-          where: anyNamed('where'),
-          whereArgs: anyNamed('whereArgs'),
-        )).thenAnswer((_) async => 0);
+          when(
+            mockDatabase.update(
+              'categories',
+              any,
+              where: anyNamed('where'),
+              whereArgs: anyNamed('whereArgs'),
+            ),
+          ).thenAnswer((_) async => 0);
 
-        expect(
-          () => repository.updateCategory(customCategory),
-          throwsA(isA<app_exceptions.CategoryNotFoundException>()),
-        );
-      });
+          expect(
+            () => repository.updateCategory(customCategory),
+            throwsA(isA<app_exceptions.CategoryNotFoundException>()),
+          );
+        },
+      );
     });
 
     group('deleteCategory', () {
       test('should delete custom category from database', () async {
-        when(mockDatabase.delete(
-          'categories',
-          where: anyNamed('where'),
-          whereArgs: anyNamed('whereArgs'),
-        )).thenAnswer((_) async => 1);
+        when(
+          mockDatabase.delete(
+            'categories',
+            where: anyNamed('where'),
+            whereArgs: anyNamed('whereArgs'),
+          ),
+        ).thenAnswer((_) async => 1);
 
         await repository.deleteCategory('custom-1');
 
-        verify(mockDatabase.delete(
-          'categories',
-          where: 'id = ?',
-          whereArgs: ['custom-1'],
-        )).called(1);
+        verify(
+          mockDatabase.delete(
+            'categories',
+            where: 'id = ?',
+            whereArgs: ['custom-1'],
+          ),
+        ).called(1);
       });
 
-      test('should throw CategoryNotFoundException when category not found',
-          () async {
-        when(mockDatabase.delete(
-          'categories',
-          where: anyNamed('where'),
-          whereArgs: anyNamed('whereArgs'),
-        )).thenAnswer((_) async => 0);
+      test(
+        'should throw CategoryNotFoundException when category not found',
+        () async {
+          when(
+            mockDatabase.delete(
+              'categories',
+              where: anyNamed('where'),
+              whereArgs: anyNamed('whereArgs'),
+            ),
+          ).thenAnswer((_) async => 0);
 
-        expect(
-          () => repository.deleteCategory('custom-1'),
-          throwsA(isA<app_exceptions.CategoryNotFoundException>()),
-        );
-      });
+          expect(
+            () => repository.deleteCategory('custom-1'),
+            throwsA(isA<app_exceptions.CategoryNotFoundException>()),
+          );
+        },
+      );
     });
   });
 }

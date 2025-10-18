@@ -3,7 +3,6 @@ import 'package:home_ai_index/data/models/item.dart';
 
 /// Form widget for editing item metadata (quantity, notes, expiration date)
 class ItemMetadataForm extends StatefulWidget {
-
   const ItemMetadataForm({super.key, this.item, required this.onSubmit});
   final Item? item;
   final Function(int quantity, String? notes, DateTime? expirationDate)

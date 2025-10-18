@@ -76,3 +76,17 @@ app.*.map.json
 
 # Environment variables (sensitive data like API keys)
 .env
+
+# CI/CD
+android/app/*.jks
+android/app/*.keystore
+ios/fastlane/report.xml
+ios/fastlane/Preview.html
+ios/fastlane/screenshots
+ios/fastlane/test_output
+
+# Secrets (extra safety)
+*.p12
+*.mobileprovision
+*_rsa
+*_rsa.pub

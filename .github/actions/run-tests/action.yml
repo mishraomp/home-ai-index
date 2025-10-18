@@ -1,0 +1,98 @@
+name: 'Run Tests'
+description: 'Execute Flutter tests with coverage reporting'
+inputs:
+  coverage-threshold:
+    description: 'Minimum coverage percentage required'
+    required: false
+    default: '80'
+  upload-coverage:
+    description: 'Upload coverage artifact'
+    required: false
+    default: 'true'
+outputs:
+  coverage-percent:
+    description: 'Line coverage percentage'
+    value: ${{ steps.coverage.outputs.percent }}
+  tests-passed:
+    description: 'Number of tests passed'
+    value: ${{ steps.test.outputs.passed }}
+  tests-failed:
+    description: 'Number of tests failed'
+    value: ${{ steps.test.outputs.failed }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Run tests with coverage
+      id: test
+      shell: bash
+      run: |
+        flutter test --coverage --reporter expanded 2>&1 | tee test-output.txt
+        
+        # Extract test counts from output
+        PASSED=$(grep -oP '\d+(?= tests? passed)' test-output.txt | tail -1 || echo "0")
+        FAILED=$(grep -oP '\d+(?= tests? failed)' test-output.txt | tail -1 || echo "0")
+        
+        echo "passed=$PASSED" >> $GITHUB_OUTPUT
+        echo "failed=$FAILED" >> $GITHUB_OUTPUT
+        
+        # Clean up temp file
+        rm -f test-output.txt
+
+    - name: Generate coverage summary
+      id: coverage
+      shell: bash
+      run: |
+        if [ -f coverage/lcov.info ]; then
+          # Install lcov if not available
+          if ! command -v lcov &> /dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y lcov
+          fi
+          
+          # Generate lcov summary
+          lcov --summary coverage/lcov.info 2>&1 | tee coverage-summary.txt
+          
+          # Extract coverage percentage
+          COVERAGE=$(grep -oP '\d+\.\d+(?=%)' coverage-summary.txt | head -1 || echo "0")
+          echo "percent=$COVERAGE" >> $GITHUB_OUTPUT
+          echo "Coverage: $COVERAGE%"
+          
+          # Clean up temp file
+          rm -f coverage-summary.txt
+        else
+          echo "No coverage file found"
+          echo "percent=0" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Check coverage threshold
+      shell: bash
+      run: |
+        COVERAGE="${{ steps.coverage.outputs.percent }}"
+        THRESHOLD="${{ inputs.coverage-threshold }}"
+        
+        # Use bc for floating point comparison
+        if command -v bc &> /dev/null; then
+          if (( $(echo "$COVERAGE < $THRESHOLD" | bc -l) )); then
+            echo "❌ Coverage $COVERAGE% is below threshold $THRESHOLD%"
+            exit 1
+          fi
+        else
+          # Fallback to integer comparison if bc not available
+          COVERAGE_INT=${COVERAGE%.*}
+          THRESHOLD_INT=${THRESHOLD%.*}
+          if [ "$COVERAGE_INT" -lt "$THRESHOLD_INT" ]; then
+            echo "❌ Coverage $COVERAGE_INT% is below threshold $THRESHOLD_INT%"
+            exit 1
+          fi
+        fi
+        
+        echo "✅ Coverage $COVERAGE% meets threshold $THRESHOLD%"
+
+    - name: Upload coverage artifact
+      if: inputs.upload-coverage == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: coverage/
+        retention-days: 30

@@ -45,15 +45,17 @@ void main() {
         expect(thumbnail!.width / thumbnail.height, closeTo(2.0, 0.1));
       });
 
-      test('should throw ImageProcessingException on invalid image data',
-          () async {
-        final invalidBytes = Uint8List.fromList([1, 2, 3, 4, 5]);
+      test(
+        'should throw ImageProcessingException on invalid image data',
+        () async {
+          final invalidBytes = Uint8List.fromList([1, 2, 3, 4, 5]);
 
-        expect(
-          () => repository.generateThumbnail(invalidBytes),
-          throwsA(isA<app_exceptions.ImageProcessingException>()),
-        );
-      });
+          expect(
+            () => repository.generateThumbnail(invalidBytes),
+            throwsA(isA<app_exceptions.ImageProcessingException>()),
+          );
+        },
+      );
     });
 
     group('compressImage', () {
@@ -69,8 +71,7 @@ void main() {
             testImage.setPixel(x, y, color);
           }
         }
-        final originalBytes =
-            Uint8List.fromList(img.encodeJpg(testImage));
+        final originalBytes = Uint8List.fromList(img.encodeJpg(testImage));
 
         final result = await repository.compressImage(originalBytes);
 

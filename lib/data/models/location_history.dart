@@ -5,7 +5,6 @@ import 'package:equatable/equatable.dart';
 /// Tracks where an item was located at specific points in time.
 /// Limited to the most recent 10 entries per item.
 class LocationHistory extends Equatable {
-
   const LocationHistory({
     required this.id,
     required this.itemId,
@@ -32,6 +31,7 @@ class LocationHistory extends Equatable {
       timestamp: DateTime.parse(map['timestamp'] as String),
     );
   }
+
   /// Unique identifier (UUID format)
   final String id;
 

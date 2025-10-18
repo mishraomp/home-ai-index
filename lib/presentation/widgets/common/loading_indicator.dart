@@ -142,9 +142,9 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
             borderRadius: BorderRadius.circular(widget.borderRadius),
             gradient: LinearGradient(
               colors: [
-                colorScheme.surfaceContainerHighest.withOpacity(0.3),
-                colorScheme.surfaceContainerHighest.withOpacity(0.5),
-                colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
               ],
               stops: [
                 (_animation.value - 1).clamp(0.0, 1.0),
@@ -177,9 +177,7 @@ class SkeletonListItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ShimmerLoading(
-                  width: MediaQuery.of(context).size.width * 0.6,
-                ),
+                ShimmerLoading(width: MediaQuery.of(context).size.width * 0.6),
                 const SizedBox(height: 8),
                 ShimmerLoading(
                   width: MediaQuery.of(context).size.width * 0.4,

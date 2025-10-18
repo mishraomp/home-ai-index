@@ -30,9 +30,7 @@ class ItemCard extends StatelessWidget {
   /// Build expiration date badge with appropriate color
   Widget _buildExpirationBadge(BuildContext context, DateTime expirationDate) {
     final isExpired = ExpirationDateUtils.isExpired(expirationDate);
-    final isExpiringSoon = ExpirationDateUtils.isExpiringSoon(
-      expirationDate,
-    );
+    final isExpiringSoon = ExpirationDateUtils.isExpiringSoon(expirationDate);
 
     Color backgroundColor;
     Color foregroundColor;
@@ -92,7 +90,7 @@ class ItemCard extends StatelessWidget {
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         color: isSelected
-            ? colorScheme.primaryContainer.withOpacity(0.5)
+            ? colorScheme.primaryContainer.withValues(alpha: 0.5)
             : null,
         child: InkWell(
           onTap: onTap,
